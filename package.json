@@ -19,11 +19,7 @@
     "contracts:deploy:celo": "turbo run deploy:celo --filter=hardhat"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.{json,css,md}": [
+    "*.{ts,tsx,js,jsx,json,css}": [
       "prettier --write"
     ]
   },
