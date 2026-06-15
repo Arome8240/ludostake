@@ -9,14 +9,29 @@
     "lint": "turbo lint",
     "clean": "turbo clean",
     "type-check": "turbo type-check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky",
     "contracts:compile": "turbo run compile --filter=hardhat",
     "contracts:test": "turbo run test --filter=hardhat",
     "contracts:deploy": "turbo run deploy --filter=hardhat",
     "contracts:deploy:celo-sepolia": "turbo run deploy:celo-sepolia --filter=hardhat",
     "contracts:deploy:celo": "turbo run deploy:celo --filter=hardhat"
   },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  },
   "devDependencies": {
     "@types/node": "^20.8.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
+    "prettier": "^3.8.4",
     "turbo": "^1.10.16",
     "typescript": "^5.2.2"
   },
