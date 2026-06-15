@@ -1,34 +1,56 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
-import { Navbar } from '@/components/navbar';
-import { WalletProvider } from "@/components/wallet-provider"
+import { WalletProvider } from '@/components/wallet-provider';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'my-celo-app',
-  description: 'A new Celo blockchain project',
+  title: 'Ludo Stakes',
+  description: 'Stake cUSD and play Ludo on Celo — powered by MiniPay',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Ludo Stakes',
+  },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#0a0a0a',
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        {/* Navbar is included on all pages */}
-        <div className="relative flex min-h-screen flex-col">
-          <WalletProvider>
-            <Navbar />
-            <main className="flex-1">
-              {children}
-            </main>
-          </WalletProvider>
-        </div>
+    <html lang="en" className="dark">
+      <body className={`${inter.variable} font-sans antialiased`}>
+        <WalletProvider>
+          {/*
+           * AppShell: full-height container that accounts for iOS safe areas.
+           * pt-safe-top ensures content clears the status bar notch.
+           * pb-nav-height leaves room for the bottom navigation bar.
+           */}
+          <div
+            id="app-shell"
+            className="
+              relative flex flex-col
+              min-h-screen min-h-dvh
+              w-full max-w-[390px] mx-auto
+              bg-surface text-foreground
+              pt-safe-top pb-[calc(4rem+env(safe-area-inset-bottom))]
+              pl-safe-left pr-safe-right
+              overflow-x-hidden
+            "
+          >
+            <main className="flex-1 flex flex-col">{children}</main>
+          </div>
+        </WalletProvider>
       </body>
     </html>
   );
