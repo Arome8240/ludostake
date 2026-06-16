@@ -22,33 +22,33 @@
 - [ ] Test connection on MiniPay testnet
 
 ## Phase 3: UI Shell & Navigation
-- [ ] Build bottom navigation bar (Home, Play, History, Profile)
-- [ ] Build Home screen with game mode cards
-- [ ] Build mode selection screen (vs Computer / vs Players)
-- [ ] Build difficulty selection screen with stake slider (vs Computer)
-- [ ] Build stake amount screen with preset buttons ($0.10, $0.50, $1, $2, $5)
-- [ ] Build lobby/waiting screen for PvP matchmaking
-- [ ] Build game result screen (win/lose) with reward display
-- [ ] Build profile screen with stats (games played, win rate, total earned)
-- [ ] Add page transitions with Framer Motion
-- [ ] Ensure all screens are optimized for 390px mobile viewport
+- [x] Build bottom navigation bar (Home, Play, History, Profile)
+- [x] Build Home screen with game mode cards
+- [x] Build mode selection screen (vs Computer / vs Players)
+- [x] Build difficulty selection screen with stake slider (vs Computer)
+- [x] Build stake amount screen with preset buttons ($0.10, $0.50, $1, $2, $5)
+- [x] Build lobby/waiting screen for PvP matchmaking
+- [x] Build game result screen (win/lose) with reward display
+- [x] Build profile screen with stats (games played, win rate, total earned)
+- [x] Add page transitions with Framer Motion
+- [x] Ensure all screens are optimized for 390px mobile viewport
 
 ## Phase 4: Ludo Game Engine
-- [ ] Set up Phaser.js game canvas inside React component
-- [ ] Draw Ludo board (15x15 grid, colored zones, safe squares)
-- [ ] Render 4 player home bases with correct colors
-- [ ] Render player pieces (4 per player) with correct starting positions
-- [ ] Implement dice roll mechanic (animated 3D dice)
-- [ ] Implement piece selection logic (highlight valid moves)
-- [ ] Implement piece movement along correct Ludo path
-- [ ] Implement capturing logic (send opponent piece home)
-- [ ] Implement safe square logic (no capturing on safe tiles)
-- [ ] Implement home column entry logic (piece-specific paths)
-- [ ] Implement win condition detection (all 4 pieces home)
-- [ ] Implement turn management (skip if no valid moves)
-- [ ] Add piece animation (smooth movement between tiles)
-- [ ] Add dice roll animation (shake + reveal)
-- [ ] Add capture animation (piece flies back to base)
+- [x] Set up Phaser.js game canvas inside React component
+- [x] Draw Ludo board (15x15 grid, colored zones, safe squares)
+- [x] Render 4 player home bases with correct colors
+- [x] Render player pieces (4 per player) with correct starting positions
+- [x] Implement dice roll mechanic (animated 3D dice)
+- [x] Implement piece selection logic (highlight valid moves)
+- [x] Implement piece movement along correct Ludo path
+- [x] Implement capturing logic (send opponent piece home)
+- [x] Implement safe square logic (no capturing on safe tiles)
+- [x] Implement home column entry logic (piece-specific paths)
+- [x] Implement win condition detection (all 4 pieces home)
+- [x] Implement turn management (skip if no valid moves)
+- [x] Add piece animation (smooth movement between tiles)
+- [x] Add dice roll animation (shake + reveal)
+- [x] Add capture animation (piece flies back to base)
 
 ## Phase 5: AI Computer Opponent
 - [ ] Build base AI class with move evaluation interface
