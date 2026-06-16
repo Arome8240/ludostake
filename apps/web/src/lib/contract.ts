@@ -10,7 +10,7 @@ export const LUDO_STAKES_ABI = parseAbi([
   'function cancelGame(bytes32 gameId) external',
 
   // Views
-  'function getGame(bytes32 gameId) external view returns (tuple(address player1, address player2, uint256 stakeAmount, uint8 state))',
+  'function getGame(bytes32 gameId) external view returns (address player1, address player2, uint256 stakeAmount, uint8 state)',
   'function netReward(uint256 stakeAmount) external pure returns (uint256)',
   'function games(bytes32) external view returns (address player1, address player2, uint256 stakeAmount, uint8 state)',
   'function cUSD() external view returns (address)',

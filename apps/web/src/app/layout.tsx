@@ -4,6 +4,7 @@ import './globals.css';
 
 import { WalletProvider } from '@/components/wallet-provider';
 import { WalletGuard } from '@/components/wallet-guard';
+import { BottomNav } from '@/components/bottom-nav';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "
             >
               <main className="flex-1 flex flex-col">{children}</main>
+              <BottomNav />
             </div>
           </WalletGuard>
         </WalletProvider>
