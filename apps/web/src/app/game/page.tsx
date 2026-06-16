@@ -32,7 +32,72 @@ const COLOR_CLASS: Record<PlayerColor, string> = {
   blue: 'bg-piece-blue',
 };
 
-const DICE_FACES = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+// Pip positions per face value — [col, row] in a 3×3 grid (0-indexed)
+const PIPS: Record<number, [number, number][]> = {
+  1: [[1, 1]],
+  2: [
+    [2, 0],
+    [0, 2],
+  ],
+  3: [
+    [2, 0],
+    [1, 1],
+    [0, 2],
+  ],
+  4: [
+    [0, 0],
+    [2, 0],
+    [0, 2],
+    [2, 2],
+  ],
+  5: [
+    [0, 0],
+    [2, 0],
+    [1, 1],
+    [0, 2],
+    [2, 2],
+  ],
+  6: [
+    [0, 0],
+    [2, 0],
+    [0, 1],
+    [2, 1],
+    [0, 2],
+    [2, 2],
+  ],
+};
+
+function DiceFace({ value, size = 72 }: { value: number; size?: number }) {
+  const pad = size * 0.14;
+  const cell = (size - pad * 2) / 3;
+  const r = size * 0.085;
+  const pips = value > 0 ? PIPS[value] : [];
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none">
+      {/* Die body */}
+      <rect
+        x={1}
+        y={1}
+        width={size - 2}
+        height={size - 2}
+        rx={size * 0.18}
+        fill="#fafafa"
+        stroke="#e2e8f0"
+        strokeWidth={2}
+      />
+      {/* Pips */}
+      {pips.map(([col, row], i) => (
+        <circle
+          key={i}
+          cx={pad + col * cell + cell / 2}
+          cy={pad + row * cell + cell / 2}
+          r={r}
+          fill="#111827"
+        />
+      ))}
+    </svg>
+  );
+}
 
 function GameContent() {
   const router = useRouter();
@@ -127,56 +192,90 @@ function GameContent() {
         <GameCanvas config={config} rollTrigger={rollTrigger} onStateChange={handleStateChange} />
       </div>
 
-      {/* Dice + turn info */}
+      {/* Dice panel — naija ludo style: die face + number, prominent & centred */}
       <div className="px-4 pb-4">
-        <div className="flex items-center gap-4 p-4 rounded-2xl bg-surface-raised border border-surface-border">
-          {/* Dice face */}
-          <motion.button
-            onClick={handleRoll}
-            disabled={!canRoll}
-            whileTap={{ scale: 0.9 }}
-            animate={rolling ? { rotate: [0, -20, 20, -15, 15, 0] } : {}}
-            transition={{ duration: 0.4 }}
-            className={`w-14 h-14 rounded-xl flex items-center justify-center text-3xl font-bold transition-all shrink-0 ${
-              canRoll
-                ? 'bg-primary text-white shadow-glow active:scale-95'
-                : 'bg-surface-overlay text-muted-foreground cursor-not-allowed'
-            }`}
-          >
-            {uiState.diceValue > 0 ? DICE_FACES[uiState.diceValue] : <Dices className="w-6 h-6" />}
-          </motion.button>
+        <motion.button
+          onClick={handleRoll}
+          disabled={!canRoll}
+          whileTap={canRoll ? { scale: 0.93 } : {}}
+          className={`w-full rounded-2xl border transition-all ${
+            canRoll
+              ? 'bg-surface-raised border-primary/40 shadow-glow active:scale-95 cursor-pointer'
+              : 'bg-surface-raised border-surface-border cursor-not-allowed'
+          }`}
+        >
+          <div className="flex items-center justify-between px-5 py-3 gap-4">
+            {/* Die face */}
+            <motion.div
+              animate={rolling ? { rotate: [0, -25, 25, -18, 18, 0] } : {}}
+              transition={{ duration: 0.45 }}
+            >
+              {uiState.diceValue > 0 ? (
+                <DiceFace value={uiState.diceValue} size={68} />
+              ) : (
+                <div className="w-[68px] h-[68px] rounded-[12px] border-2 border-dashed border-surface-border flex items-center justify-center">
+                  <Dices className="w-7 h-7 text-muted-foreground" />
+                </div>
+              )}
+            </motion.div>
 
-          {/* Status text */}
-          <div className="flex-1 min-w-0">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`${uiState.phase}-${uiState.currentPlayer}`}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.15 }}
-              >
-                <p className="font-semibold text-sm">
+            {/* Number + label */}
+            <div className="flex-1 flex flex-col items-center gap-0.5">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={uiState.diceValue}
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.3 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+                  className={`text-5xl font-black leading-none ${
+                    uiState.diceValue > 0 ? 'text-foreground' : 'text-surface-border'
+                  }`}
+                >
+                  {uiState.diceValue > 0 ? uiState.diceValue : '—'}
+                </motion.span>
+              </AnimatePresence>
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={`${uiState.phase}-${uiState.currentPlayer}`}
+                  initial={{ opacity: 0, y: 3 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -3 }}
+                  transition={{ duration: 0.15 }}
+                  className="text-xs font-medium text-muted-foreground text-center leading-tight"
+                >
                   {uiState.phase === 'gameover'
                     ? uiState.winner === 'red'
                       ? '🎉 You win!'
                       : 'You lost'
-                    : isHumanTurn
-                      ? 'Your turn'
-                      : `${COLOR_LABEL[uiState.currentPlayer]} is thinking…`}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {uiState.phase === 'rolling' && isHumanTurn && 'Tap the dice to roll'}
-                  {uiState.phase === 'selecting' &&
-                    isHumanTurn &&
-                    'Tap a highlighted piece to move'}
-                  {uiState.phase === 'moving' && 'Moving…'}
-                  {!isHumanTurn && uiState.phase !== 'gameover' && 'AI is making a move'}
-                </p>
-              </motion.div>
-            </AnimatePresence>
+                    : uiState.phase === 'rolling' && isHumanTurn
+                      ? 'TAP TO ROLL'
+                      : uiState.phase === 'selecting' && isHumanTurn
+                        ? 'Pick a piece'
+                        : uiState.phase === 'moving'
+                          ? 'Moving…'
+                          : `${COLOR_LABEL[uiState.currentPlayer]} thinking…`}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+
+            {/* Roll indicator pip */}
+            <div className="w-[68px] flex flex-col items-center gap-1">
+              {canRoll && (
+                <motion.div
+                  animate={{ opacity: [1, 0.3, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="w-2.5 h-2.5 rounded-full bg-primary"
+                />
+              )}
+              <span
+                className={`text-[10px] font-semibold uppercase tracking-wide ${canRoll ? 'text-primary' : 'text-muted-foreground/40'}`}
+              >
+                {canRoll ? 'Roll' : isHumanTurn ? '' : 'Wait'}
+              </span>
+            </div>
           </div>
-        </div>
+        </motion.button>
       </div>
     </div>
   );
