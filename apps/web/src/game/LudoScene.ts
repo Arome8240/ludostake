@@ -22,7 +22,7 @@ export type GamePhase = 'rolling' | 'selecting' | 'moving' | 'gameover';
 export interface GameUIState {
   phase: GamePhase;
   currentPlayer: PlayerColor;
-  diceValue: number;
+  diceValues: [number, number]; // two dice
   selectablePieces: string[]; // `${color}-${id}`
   winner: PlayerColor | null;
   scores: Record<PlayerColor, number>;
@@ -60,7 +60,7 @@ export class LudoScene extends Phaser.Scene {
   private phase: GamePhase = 'rolling';
   private playerOrder: PlayerColor[] = ['red', 'green'];
   private currentIdx: number = 0;
-  private diceVal: number = 0;
+  private diceVals: [number, number] = [0, 0];
   private isHuman: Record<PlayerColor, boolean> = {
     red: true,
     green: false,
@@ -97,10 +97,11 @@ export class LudoScene extends Phaser.Scene {
   rollDice() {
     if (this.phase !== 'rolling') return;
 
-    const val = Phaser.Math.Between(1, 6);
-    this.diceVal = val;
+    const d1 = Phaser.Math.Between(1, 6);
+    const d2 = Phaser.Math.Between(1, 6);
+    this.diceVals = [d1, d2];
 
-    const valid = this.getValidPieces(val);
+    const valid = this.getValidPieces(d1 + d2);
 
     if (valid.length === 0) {
       this.phase = 'moving';
@@ -117,6 +118,10 @@ export class LudoScene extends Phaser.Scene {
     this.emitState();
   }
 
+  private diceSum(): number {
+    return this.diceVals[0] + this.diceVals[1];
+  }
+
   // ── Turn machinery ───────────────────────────────────────────────────────────
 
   private currentColor(): PlayerColor {
@@ -127,12 +132,13 @@ export class LudoScene extends Phaser.Scene {
     return this.isHuman[this.currentColor()];
   }
 
-  private getValidPieces(dice: number): Piece[] {
+  private getValidPieces(sum: number): Piece[] {
     const color = this.currentColor();
     return this.pieces.filter((p) => {
       if (p.color !== color || p.pos === 57) return false;
-      if (p.pos === -1) return dice === 6;
-      return p.pos + dice <= 57;
+      // Need at least one die showing 6 to exit the yard
+      if (p.pos === -1) return this.diceVals[0] === 6 || this.diceVals[1] === 6;
+      return p.pos + sum <= 57;
     });
   }
 
@@ -140,7 +146,7 @@ export class LudoScene extends Phaser.Scene {
     if (!extraTurn) {
       this.currentIdx = (this.currentIdx + 1) % this.playerOrder.length;
     }
-    this.diceVal = 0;
+    this.diceVals = [0, 0];
     this.phase = 'rolling';
   }
 
@@ -154,7 +160,7 @@ export class LudoScene extends Phaser.Scene {
       this.rollDice();
       if (this.phase === 'selecting') {
         this.time.delayedCall(500, () => {
-          const valid = this.getValidPieces(this.diceVal);
+          const valid = this.getValidPieces(this.diceSum());
           if (valid.length > 0) {
             this.executeMove(valid[Phaser.Math.Between(0, valid.length - 1)]);
           }
@@ -170,7 +176,7 @@ export class LudoScene extends Phaser.Scene {
     this.phase = 'moving';
     this.emitState();
 
-    const newPos = piece.pos === -1 ? 0 : piece.pos + this.diceVal;
+    const newPos = piece.pos === -1 ? 0 : piece.pos + this.diceSum();
     const [tr, tc] = getPieceGridPos(piece.color, piece.id, newPos);
     const [tx, ty] = cellCenter(tr, tc);
 
@@ -193,7 +199,8 @@ export class LudoScene extends Phaser.Scene {
           }
         }
 
-        const extraTurn = this.diceVal === 6;
+        // Doubles = extra turn (naija ludo rule)
+        const extraTurn = this.diceVals[0] === this.diceVals[1];
         this.advanceTurn(extraTurn);
         this.startTurn();
       },
@@ -266,13 +273,13 @@ export class LudoScene extends Phaser.Scene {
   private emitState() {
     const selectable =
       this.phase === 'selecting'
-        ? this.getValidPieces(this.diceVal).map((p) => `${p.color}-${p.id}`)
+        ? this.getValidPieces(this.diceSum()).map((p) => `${p.color}-${p.id}`)
         : [];
 
     this.bridge.onStateChange({
       phase: this.phase,
       currentPlayer: this.currentColor(),
-      diceValue: this.diceVal,
+      diceValues: [this.diceVals[0], this.diceVals[1]],
       selectablePieces: selectable,
       winner: this.phase === 'gameover' ? this.currentColor() : null,
       scores: { ...this.scores },

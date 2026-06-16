@@ -3,7 +3,7 @@
 import { Suspense, useState, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Dices } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import type { GameUIState, GameConfig } from '@/game/LudoScene';
 import type { PlayerColor } from '@/game/constants';
@@ -67,6 +67,24 @@ const PIPS: Record<number, [number, number][]> = {
   ],
 };
 
+function EmptyDie({ size = 72 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none">
+      <rect
+        x={1}
+        y={1}
+        width={size - 2}
+        height={size - 2}
+        rx={size * 0.18}
+        fill="transparent"
+        stroke="#334155"
+        strokeWidth={2}
+        strokeDasharray="4 3"
+      />
+    </svg>
+  );
+}
+
 function DiceFace({ value, size = 72 }: { value: number; size?: number }) {
   const pad = size * 0.14;
   const cell = (size - pad * 2) / 3;
@@ -113,7 +131,7 @@ function GameContent() {
   const [uiState, setUiState] = useState<GameUIState>({
     phase: 'rolling',
     currentPlayer: 'red',
-    diceValue: 0,
+    diceValues: [0, 0],
     selectablePieces: [],
     winner: null,
     scores: { red: 0, green: 0, yellow: 0, blue: 0 },
@@ -204,37 +222,70 @@ function GameContent() {
               : 'bg-surface-raised border-surface-border cursor-not-allowed'
           }`}
         >
-          <div className="flex items-center justify-between px-5 py-3 gap-4">
-            {/* Die face */}
+          {/* Two dice side by side + sum + label */}
+          <div className="flex items-center gap-3 px-4 py-3">
+            {/* Die 1 */}
             <motion.div
-              animate={rolling ? { rotate: [0, -25, 25, -18, 18, 0] } : {}}
+              animate={rolling ? { rotate: [0, -30, 30, -20, 20, 0] } : {}}
               transition={{ duration: 0.45 }}
             >
-              {uiState.diceValue > 0 ? (
-                <DiceFace value={uiState.diceValue} size={68} />
+              {uiState.diceValues[0] > 0 ? (
+                <DiceFace value={uiState.diceValues[0]} size={64} />
               ) : (
-                <div className="w-[68px] h-[68px] rounded-[12px] border-2 border-dashed border-surface-border flex items-center justify-center">
-                  <Dices className="w-7 h-7 text-muted-foreground" />
-                </div>
+                <EmptyDie size={64} />
               )}
             </motion.div>
 
-            {/* Number + label */}
+            {/* Die 2 — offset animation so they look independent */}
+            <motion.div
+              animate={rolling ? { rotate: [0, 25, -25, 18, -18, 0] } : {}}
+              transition={{ duration: 0.45, delay: 0.05 }}
+            >
+              {uiState.diceValues[1] > 0 ? (
+                <DiceFace value={uiState.diceValues[1]} size={64} />
+              ) : (
+                <EmptyDie size={64} />
+              )}
+            </motion.div>
+
+            {/* Divider */}
+            <div className="w-px h-12 bg-surface-border mx-1" />
+
+            {/* Sum + status */}
             <div className="flex-1 flex flex-col items-center gap-0.5">
               <AnimatePresence mode="wait">
-                <motion.span
-                  key={uiState.diceValue}
-                  initial={{ opacity: 0, scale: 0.6 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.3 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 22 }}
-                  className={`text-5xl font-black leading-none ${
-                    uiState.diceValue > 0 ? 'text-foreground' : 'text-surface-border'
-                  }`}
-                >
-                  {uiState.diceValue > 0 ? uiState.diceValue : '—'}
-                </motion.span>
+                {uiState.diceValues[0] > 0 ? (
+                  <motion.span
+                    key={`${uiState.diceValues[0]}-${uiState.diceValues[1]}`}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.4 }}
+                    transition={{ type: 'spring', stiffness: 420, damping: 22 }}
+                    className="text-5xl font-black leading-none text-foreground"
+                  >
+                    {uiState.diceValues[0] + uiState.diceValues[1]}
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="empty"
+                    className="text-5xl font-black leading-none text-surface-border"
+                  >
+                    —
+                  </motion.span>
+                )}
               </AnimatePresence>
+
+              {/* doubles badge */}
+              {uiState.diceValues[0] > 0 && uiState.diceValues[0] === uiState.diceValues[1] && (
+                <motion.span
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-[10px] font-bold text-primary uppercase tracking-wide"
+                >
+                  Doubles!
+                </motion.span>
+              )}
+
               <AnimatePresence mode="wait">
                 <motion.span
                   key={`${uiState.phase}-${uiState.currentPlayer}`}
@@ -242,14 +293,14 @@ function GameContent() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -3 }}
                   transition={{ duration: 0.15 }}
-                  className="text-xs font-medium text-muted-foreground text-center leading-tight"
+                  className="text-[11px] font-semibold text-muted-foreground text-center leading-tight uppercase tracking-wide"
                 >
                   {uiState.phase === 'gameover'
                     ? uiState.winner === 'red'
                       ? '🎉 You win!'
                       : 'You lost'
                     : uiState.phase === 'rolling' && isHumanTurn
-                      ? 'TAP TO ROLL'
+                      ? 'Tap to roll'
                       : uiState.phase === 'selecting' && isHumanTurn
                         ? 'Pick a piece'
                         : uiState.phase === 'moving'
@@ -259,12 +310,12 @@ function GameContent() {
               </AnimatePresence>
             </div>
 
-            {/* Roll indicator pip */}
-            <div className="w-[68px] flex flex-col items-center gap-1">
+            {/* Pulse dot */}
+            <div className="flex flex-col items-center gap-1 w-6">
               {canRoll && (
                 <motion.div
-                  animate={{ opacity: [1, 0.3, 1] }}
-                  transition={{ duration: 1, repeat: Infinity }}
+                  animate={{ opacity: [1, 0.2, 1] }}
+                  transition={{ duration: 0.9, repeat: Infinity }}
                   className="w-2.5 h-2.5 rounded-full bg-primary"
                 />
               )}
