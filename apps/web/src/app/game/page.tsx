@@ -295,17 +295,19 @@ function GameContent() {
                   transition={{ duration: 0.15 }}
                   className="text-[11px] font-semibold text-muted-foreground text-center leading-tight uppercase tracking-wide"
                 >
-                  {uiState.phase === 'gameover'
-                    ? uiState.winner === 'red'
-                      ? '🎉 You win!'
-                      : 'You lost'
-                    : uiState.phase === 'rolling' && isHumanTurn
-                      ? 'Tap to roll'
-                      : uiState.phase === 'selecting' && isHumanTurn
-                        ? 'Pick a piece'
-                        : uiState.phase === 'moving'
-                          ? 'Moving…'
-                          : `${COLOR_LABEL[uiState.currentPlayer]} thinking…`}
+                  {uiState.forfeited
+                    ? 'Turn forfeited!'
+                    : uiState.phase === 'gameover'
+                      ? uiState.winner === 'red'
+                        ? '🎉 You win!'
+                        : 'You lost'
+                      : uiState.phase === 'rolling' && isHumanTurn
+                        ? 'Tap to roll'
+                        : uiState.phase === 'selecting' && isHumanTurn
+                          ? 'Pick a piece'
+                          : uiState.phase === 'moving'
+                            ? 'Moving…'
+                            : `${COLOR_LABEL[uiState.currentPlayer]} thinking…`}
                 </motion.span>
               </AnimatePresence>
             </div>
