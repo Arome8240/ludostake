@@ -2,23 +2,23 @@
 
 ## Phase 1: Project Setup
 - [x] Initialize Next.js 14 project with TypeScript and Tailwind CSS
-- [ ] Configure ESLint, Prettier, and git hooks
-- [ ] Set up folder structure (components, hooks, lib, types, contracts, styles)
+- [x] Configure ESLint, Prettier, and git hooks
+- [x] Set up folder structure (components, hooks, lib, types, contracts, styles)
 - [x] Install and configure wagmi, viem for Celo/MiniPay wallet connection
-- [ ] Install Phaser.js for game rendering
-- [ ] Install Colyseus client for realtime multiplayer
-- [ ] Set up environment variables structure (.env.example)
-- [ ] Configure Tailwind with custom design tokens (colors, fonts, spacing)
-- [ ] Create base layout component with mobile-safe areas
-- [ ] Set up global CSS with dark theme defaults
+- [x] Install Phaser.js for game rendering
+- [x] Install Colyseus client for realtime multiplayer
+- [x] Set up environment variables structure (.env.example)
+- [x] Configure Tailwind with custom design tokens (colors, fonts, spacing)
+- [x] Create base layout component with mobile-safe areas
+- [x] Set up global CSS with dark theme defaults
 
 ## Phase 2: MiniPay Integration
-- [ ] Detect MiniPay wallet provider (window.ethereum with isMiniPay flag)
-- [ ] Build wallet connection hook (useMiniPay)
-- [ ] Display connected wallet address (truncated)
-- [ ] Fetch and display cUSD balance from Celo
-- [ ] Handle wallet disconnection and error states
-- [ ] Build WalletGuard component (blocks app if no wallet connected)
+- [x] Detect MiniPay wallet provider (window.ethereum with isMiniPay flag)
+- [x] Build wallet connection hook (useMiniPay)
+- [x] Display connected wallet address (truncated)
+- [x] Fetch and display cUSD balance from Celo
+- [x] Handle wallet disconnection and error states
+- [x] Build WalletGuard component (blocks app if no wallet connected)
 - [ ] Test connection on MiniPay testnet
 
 ## Phase 3: UI Shell & Navigation
@@ -73,19 +73,19 @@
 - [ ] Add practice mode (vs Computer, free, no stakes)
 
 ## Phase 7: Staking & Smart Contract
-- [ ] Write Solidity staking contract (LudoStakes.sol) on Celo
-- [ ] Implement createGame() — locks stake from both players
-- [ ] Implement joinGame() — second player stakes to join
-- [ ] Implement declareWinner() — called by game server, releases pot
-- [ ] Implement cancelGame() — refund if opponent never joins
-- [ ] Implement protocol fee (8% to treasury address)
+- [x] Write Solidity staking contract (LudoStakes.sol) on Celo
+- [x] Implement createGame() — locks stake from both players
+- [x] Implement joinGame() — second player stakes to join
+- [x] Implement declareWinner() — called by game server, releases pot
+- [x] Implement cancelGame() — refund if opponent never joins
+- [x] Implement protocol fee (8% to treasury address)
 - [ ] Deploy contract to Celo Alfajores testnet
-- [ ] Write contract ABI and type-safe wrapper in /lib/contract.ts
-- [ ] Build useStaking hook (createGame, joinGame, claimReward)
-- [ ] Build stake confirmation modal (show amount, fee, net reward)
-- [ ] Add transaction pending state (spinner + hash link)
-- [ ] Add transaction success state (confetti + reward amount)
-- [ ] Add transaction failed state (error message + retry)
+- [x] Write contract ABI and type-safe wrapper in /lib/contract.ts
+- [x] Build useStaking hook (createGame, joinGame, claimReward)
+- [x] Build stake confirmation modal (show amount, fee, net reward)
+- [x] Add transaction pending state (spinner + hash link)
+- [x] Add transaction success state (confetti + reward amount)
+- [x] Add transaction failed state (error message + retry)
 - [ ] Test full stake → play → reward flow on testnet
 
 ## Phase 8: Game History
