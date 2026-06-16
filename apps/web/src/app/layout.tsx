@@ -29,6 +29,12 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <meta
+          name="talentapp:project_verification"
+          content="bde349558f9008b6abe452bd0629bec9a741fb1a633166164d2592ebf380bac230c3998648a195da853b0e24049a25e96439c0e70df2bfc201120e0882e44b68"
+        />
+      </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <WalletProvider>
           {/*
