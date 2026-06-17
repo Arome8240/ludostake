@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import type { GameUIState, GameConfig } from '@/game/LudoScene';
 import type { PlayerColor } from '@/game/constants';
+import { saveGameResult } from '@/lib/game-history';
 
 // Dynamically import the canvas so Phaser never runs on the server.
 const GameCanvas = dynamic(
@@ -163,6 +164,8 @@ function GameContent() {
   const [rollTrigger, setRollTrigger] = useState(0);
   const [rolling, setRolling] = useState(false);
   const rollTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const startTimeRef = useRef<number>(Date.now());
+  const savedRef = useRef(false); // guard against double-save
 
   const handleStateChange = useCallback(
     (s: GameUIState) => {
@@ -170,9 +173,28 @@ function GameContent() {
       if (s.phase !== 'rolling') {
         setRolling(false);
       }
-      if (s.phase === 'gameover' && s.winner) {
+      if (s.phase === 'gameover' && s.winner && !savedRef.current) {
+        savedRef.current = true;
         const isWin = s.winner === 'red';
         const result = isWin ? 'win' : 'loss';
+        const durationSeconds = Math.floor((Date.now() - startTimeRef.current) / 1000);
+
+        saveGameResult({
+          gameId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          // GameConfig uses 'computer'/'pvp'; history type uses 'vs-computer'/'vs-players'
+          mode: (mode === 'computer'
+            ? 'vs-computer'
+            : 'vs-players') as import('@/types/game').GameMode,
+          difficulty: difficulty as import('@/types/game').Difficulty | undefined,
+          stakeAmount: stake ?? '0',
+          rewardAmount: '0', // staked rewards populated by contract in Phase 5
+          result,
+          opponentType: mode === 'computer' ? 'ai' : 'human',
+          durationSeconds,
+          playedAt: Date.now(),
+          moves: [],
+        });
+
         setTimeout(() => {
           router.push(
             `/result?result=${result}&mode=${mode}&difficulty=${difficulty}${stake ? `&stake=${stake}` : ''}`
