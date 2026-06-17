@@ -23,6 +23,8 @@ export interface GameUIState {
   phase: GamePhase;
   currentPlayer: PlayerColor;
   diceValues: [number, number]; // two dice
+  activeDie?: number; // which die value is currently being used for piece selection
+  movesLeft: number; // 0, 1, or 2 — how many die-moves remain this turn
   selectablePieces: string[]; // `${color}-${id}`
   winner: PlayerColor | null;
   scores: Record<PlayerColor, number>;
@@ -62,6 +64,8 @@ export class LudoScene extends Phaser.Scene {
   private playerOrder: PlayerColor[] = ['red', 'green'];
   private currentIdx: number = 0;
   private diceVals: [number, number] = [0, 0];
+  private remainingMoves: number[] = []; // die values still to be played this turn
+  private capturedThisTurn: boolean = false; // any capture this full turn → extra turn
   private consecutiveBonusCount: number = 0; // doubles + captures; 3 in a row = forfeit
   private capturesMade: Record<PlayerColor, number> = { red: 0, green: 0, yellow: 0, blue: 0 };
   private isHuman: Record<PlayerColor, boolean> = {
@@ -104,11 +108,11 @@ export class LudoScene extends Phaser.Scene {
     const d2 = Phaser.Math.Between(1, 6);
     this.diceVals = [d1, d2];
 
-    // Three consecutive bonus turns = forfeited turn (naija rule)
+    // Three consecutive bonus turns = forfeited (naija rule)
     if (this.consecutiveBonusCount >= 2) {
       this.consecutiveBonusCount = 0;
       this.phase = 'moving';
-      this.emitState(true); // forfeited = true
+      this.emitState(true);
       this.time.delayedCall(500, () => {
         this.advanceTurn(false);
         this.startTurn();
@@ -116,25 +120,9 @@ export class LudoScene extends Phaser.Scene {
       return;
     }
 
-    const valid = this.getValidPieces(d1 + d2);
-
-    if (valid.length === 0) {
-      this.phase = 'moving';
-      this.emitState();
-      this.time.delayedCall(400, () => {
-        this.advanceTurn(false);
-        this.startTurn();
-      });
-      return;
-    }
-
-    this.phase = 'selecting';
-    this.applyHighlights(valid);
-    this.emitState();
-  }
-
-  private diceSum(): number {
-    return this.diceVals[0] + this.diceVals[1];
+    // Sort descending so 6s are played first (yard exit before forward move)
+    this.remainingMoves = [d1, d2].sort((a, b) => b - a);
+    this.startNextMove();
   }
 
   // ── Turn machinery ───────────────────────────────────────────────────────────
@@ -147,20 +135,64 @@ export class LudoScene extends Phaser.Scene {
     return this.isHuman[this.currentColor()];
   }
 
-  private getValidPieces(sum: number): Piece[] {
+  // Returns pieces that can legally move using a single die value
+  private getValidPiecesForDie(die: number): Piece[] {
     const color = this.currentColor();
     return this.pieces.filter((p) => {
       if (p.color !== color || p.pos === 57) return false;
-      // Need at least one die showing 6 to exit yard
-      if (p.pos === -1) {
-        if (!(this.diceVals[0] === 6 || this.diceVals[1] === 6)) return false;
-        return !this.isPathBlocked(p, sum);
-      }
-      if (p.pos + sum > 57) return false;
+      // Yard exit requires exactly a 6
+      if (p.pos === -1) return die === 6 && !this.isPathBlocked(p, die);
+      if (p.pos + die > 57) return false;
       // Must make at least one capture before entering home column (naija rule)
-      if (this.capturesMade[color] === 0 && p.pos + sum >= 52) return false;
-      return !this.isPathBlocked(p, sum);
+      if (this.capturesMade[color] === 0 && p.pos + die >= 52) return false;
+      return !this.isPathBlocked(p, die);
     });
+  }
+
+  // Progress through the remaining dice, one at a time
+  private startNextMove() {
+    if (this.remainingMoves.length === 0) {
+      this.finishTurn();
+      return;
+    }
+
+    const die = this.remainingMoves[0];
+    const valid = this.getValidPiecesForDie(die);
+
+    if (valid.length === 0) {
+      // No piece can use this die — skip it
+      this.remainingMoves.shift();
+      this.phase = 'moving';
+      this.emitState();
+      this.time.delayedCall(300, () => this.startNextMove());
+      return;
+    }
+
+    this.phase = 'selecting';
+    this.applyHighlights(valid);
+    this.emitState();
+
+    // AI auto-selects for non-human players
+    if (!this.isCurrentHuman()) {
+      this.time.delayedCall(500, () => {
+        if (this.phase !== 'selecting') return;
+        const currentValid = this.getValidPiecesForDie(this.remainingMoves[0] ?? 0);
+        if (currentValid.length > 0) {
+          this.executeMove(currentValid[Phaser.Math.Between(0, currentValid.length - 1)]);
+        }
+      });
+    }
+  }
+
+  // Called after all dice have been played; decides extra turn vs advance
+  private finishTurn() {
+    const isDoubles = this.diceVals[0] === this.diceVals[1];
+    if (isDoubles || this.capturedThisTurn) {
+      this.grantBonus();
+    } else {
+      this.endTurn();
+    }
+    this.startTurn();
   }
 
   private advanceTurn(extraTurn: boolean) {
@@ -168,6 +200,8 @@ export class LudoScene extends Phaser.Scene {
       this.currentIdx = (this.currentIdx + 1) % this.playerOrder.length;
     }
     this.diceVals = [0, 0];
+    this.remainingMoves = [];
+    this.capturedThisTurn = false;
     this.phase = 'rolling';
   }
 
@@ -187,17 +221,8 @@ export class LudoScene extends Phaser.Scene {
   }
 
   private scheduleAiTurn() {
-    this.time.delayedCall(700, () => {
-      this.rollDice();
-      if (this.phase === 'selecting') {
-        this.time.delayedCall(500, () => {
-          const valid = this.getValidPieces(this.diceSum());
-          if (valid.length > 0) {
-            this.executeMove(valid[Phaser.Math.Between(0, valid.length - 1)]);
-          }
-        });
-      }
-    });
+    // AI rolls; startNextMove handles piece selection
+    this.time.delayedCall(700, () => this.rollDice());
   }
 
   // ── Move execution ───────────────────────────────────────────────────────────
@@ -207,7 +232,10 @@ export class LudoScene extends Phaser.Scene {
     this.phase = 'moving';
     this.emitState();
 
-    const newPos = piece.pos === -1 ? 0 : piece.pos + this.diceSum();
+    // Consume the active die (6 exits yard, other die values advance the piece)
+    const die = this.remainingMoves.shift()!;
+    // yard exit lands on relPos 0 (entry square); all others advance by die value
+    const newPos = piece.pos === -1 ? 0 : piece.pos + die;
     const [tr, tc] = getPieceGridPos(piece.color, piece.id, newPos);
     const [tx, ty] = cellCenter(tr, tc);
 
@@ -226,11 +254,13 @@ export class LudoScene extends Phaser.Scene {
         piece.pos = newPos;
         if (partner) partner.pos = newPos;
 
-        const didCapture = this.handleCapture(piece);
+        if (this.handleCapture(piece)) {
+          this.capturedThisTurn = true;
+        }
 
         if (newPos === 57) {
           this.scores[piece.color]++;
-          if (partner) this.scores[piece.color]++; // partner also scored
+          if (partner) this.scores[piece.color]++;
           if (this.checkWin(piece.color)) {
             this.phase = 'gameover';
             this.emitState();
@@ -238,14 +268,8 @@ export class LudoScene extends Phaser.Scene {
           }
         }
 
-        // Extra turn: doubles OR capture (naija rule); pick whichever fired
-        const isDoubles = this.diceVals[0] === this.diceVals[1];
-        if (isDoubles || didCapture) {
-          this.grantBonus();
-        } else {
-          this.endTurn();
-        }
-        this.startTurn();
+        // Play remaining dice or finish turn
+        this.startNextMove();
       },
     });
   }
@@ -385,21 +409,25 @@ export class LudoScene extends Phaser.Scene {
     for (const p of this.pieces) {
       this.tweens.killTweensOf(p.hl);
       p.hl.setVisible(false).setAlpha(1);
+      p.gfx.removeAllListeners('pointerdown');
     }
   }
 
   // ── State emission ───────────────────────────────────────────────────────────
 
   private emitState(forfeited = false) {
+    const activeDie = this.remainingMoves[0];
     const selectable =
-      this.phase === 'selecting'
-        ? this.getValidPieces(this.diceSum()).map((p) => `${p.color}-${p.id}`)
+      this.phase === 'selecting' && activeDie != null
+        ? this.getValidPiecesForDie(activeDie).map((p) => `${p.color}-${p.id}`)
         : [];
 
     this.bridge.onStateChange({
       phase: this.phase,
       currentPlayer: this.currentColor(),
       diceValues: [this.diceVals[0], this.diceVals[1]],
+      activeDie,
+      movesLeft: this.remainingMoves.length,
       selectablePieces: selectable,
       winner: this.phase === 'gameover' ? this.currentColor() : null,
       scores: { ...this.scores },
