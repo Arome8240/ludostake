@@ -123,11 +123,12 @@ Rolling a six is the most important event in Naija Ludo:
 
 Ludo Stakes follows the **two-dice digital Naija Ludo** ruleset:
 
-- **2 dice** rolled per turn; movement = sum.
-- Exit yard: at least one die must show **6**.
-- **Doubles** = extra turn.
-- Capture sends opponent back to yard; does **not** currently grant bonus turn (Phase 5 roadmap).
-- Capture-before-home-column rule not yet enforced (Phase 5 roadmap).
+- **2 dice** rolled per turn; each die is a **separate move** (e.g. rolling 6+3 exits a piece from yard, then moves it 3 steps).
+- Exit yard: the die used must show **6**; the other die then advances the piece.
+- **Doubles** = extra turn after both dice are played.
+- **Capture** sends opponent back to yard, **grants an extra turn**, and the capturing piece **wins immediately** — it is moved straight to the centre (position 57) without completing the remaining circuit.
+- **Must capture at least once** before any piece may enter the home column (positions 52–56).
 - Safe squares enforced — no captures on positions 0, 8, 13, 21, 26, 34, 39, 47.
-- Exact roll required to reach the center (position 57).
+- **Three consecutive bonus turns** (doubles/captures) = turn forfeited.
+- Exact roll required to reach the centre (position 57).
 - First to land all 4 pieces at position 57 wins.

@@ -254,8 +254,14 @@ export class LudoScene extends Phaser.Scene {
         piece.pos = newPos;
         if (partner) partner.pos = newPos;
 
-        if (this.handleCapture(piece)) {
+        const didCapture = this.handleCapture(piece);
+        if (didCapture) {
           this.capturedThisTurn = true;
+          // Naija rule: capturing piece goes home immediately — no need to complete the circuit
+          if (newPos < 52) {
+            this.snapPieceToHome(piece, partner);
+            return;
+          }
         }
 
         if (newPos === 57) {
@@ -269,6 +275,35 @@ export class LudoScene extends Phaser.Scene {
         }
 
         // Play remaining dice or finish turn
+        this.startNextMove();
+      },
+    });
+  }
+
+  // Naija rule: send a piece straight to the winning center after a capture
+  private snapPieceToHome(piece: Piece, partner: Piece | null) {
+    piece.pos = 57;
+    if (partner) partner.pos = 57;
+
+    const [hr, hc] = getPieceGridPos(piece.color, piece.id, 57);
+    const [hx, hy] = cellCenter(hr, hc);
+    const tweenTargets: Phaser.GameObjects.Graphics[] = [piece.gfx, piece.hl];
+    if (partner) tweenTargets.push(partner.gfx, partner.hl);
+
+    this.tweens.add({
+      targets: tweenTargets,
+      x: hx,
+      y: hy,
+      duration: 400,
+      ease: 'Back.easeOut',
+      onComplete: () => {
+        this.scores[piece.color]++;
+        if (partner) this.scores[piece.color]++;
+        if (this.checkWin(piece.color)) {
+          this.phase = 'gameover';
+          this.emitState();
+          return;
+        }
         this.startNextMove();
       },
     });
