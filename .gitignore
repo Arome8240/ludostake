@@ -1,3 +1,6 @@
+# Simulation scripts (contain generated private keys — never commit)
+apps/contracts/scripts/simulate/
+
 # Dependencies
 node_modules/
 .pnpm-store/
