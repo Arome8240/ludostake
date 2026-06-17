@@ -24,6 +24,21 @@ export function saveGameResult(entry: GameHistoryEntry): void {
   }
 }
 
+/** After a successful on-chain recording, backfill the txHash into the localStorage entry. */
+export function updateGameTxHash(gameId: string, txHash: `0x${string}`): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const history = getGameHistory();
+    const idx = history.findIndex((e) => e.gameId === gameId);
+    if (idx !== -1) {
+      history[idx] = { ...history[idx], txHash };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    }
+  } catch {
+    // ignore
+  }
+}
+
 export function clearGameHistory(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(STORAGE_KEY);

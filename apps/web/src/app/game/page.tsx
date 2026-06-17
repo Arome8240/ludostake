@@ -7,7 +7,8 @@ import { ArrowLeft } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import type { GameUIState, GameConfig } from '@/game/LudoScene';
 import type { PlayerColor } from '@/game/constants';
-import { saveGameResult } from '@/lib/game-history';
+import { saveGameResult, updateGameTxHash } from '@/lib/game-history';
+import { useRecordResult } from '@/hooks/useRecordResult';
 
 // Dynamically import the canvas so Phaser never runs on the server.
 const GameCanvas = dynamic(
@@ -166,6 +167,7 @@ function GameContent() {
   const rollTimeout = useRef<ReturnType<typeof setTimeout>>();
   const startTimeRef = useRef<number>(Date.now());
   const savedRef = useRef(false); // guard against double-save
+  const recordOnChain = useRecordResult();
 
   const handleStateChange = useCallback(
     (s: GameUIState) => {
@@ -179,20 +181,26 @@ function GameContent() {
         const result = isWin ? 'win' : 'loss';
         const durationSeconds = Math.floor((Date.now() - startTimeRef.current) / 1000);
 
+        // Save to localStorage immediately as a fallback (no txHash yet)
+        const gameId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
         saveGameResult({
-          gameId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          // GameConfig uses 'computer'/'pvp'; history type uses 'vs-computer'/'vs-players'
+          gameId,
           mode: (mode === 'computer'
             ? 'vs-computer'
             : 'vs-players') as import('@/types/game').GameMode,
           difficulty: difficulty as import('@/types/game').Difficulty | undefined,
           stakeAmount: stake ?? '0',
-          rewardAmount: '0', // staked rewards populated by contract in Phase 5
+          rewardAmount: '0',
           result,
           opponentType: mode === 'computer' ? 'ai' : 'human',
           durationSeconds,
           playedAt: Date.now(),
           moves: [],
+        });
+
+        // Record on-chain in the background; update localStorage entry with txHash if it lands
+        recordOnChain(isWin, mode, durationSeconds, stake ?? '0').then((txHash) => {
+          if (txHash) updateGameTxHash(gameId, txHash);
         });
 
         setTimeout(() => {
@@ -202,7 +210,7 @@ function GameContent() {
         }, 1800);
       }
     },
-    [router, mode, difficulty, stake]
+    [router, mode, difficulty, stake, recordOnChain]
   );
 
   const handleRoll = () => {

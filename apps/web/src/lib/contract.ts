@@ -107,6 +107,24 @@ export function stakeBreakdown(cusdAmount: string) {
   };
 }
 
+// ── LudoStats ──────────────────────────────────────────────────────────────────
+
+export const LUDO_STATS_ABI = parseAbi([
+  'event ResultRecorded(address indexed player, bool indexed won, uint8 mode, uint32 durationSecs, uint256 stakeAmount, uint256 timestamp)',
+  'function recordResult(bool won, uint8 mode, uint32 durationSecs, uint256 stakeAmount) external',
+]);
+
+export const LUDO_STATS_ADDRESS: Record<number, `0x${string}`> = {
+  42220:
+    (process.env.NEXT_PUBLIC_LUDO_STATS_ADDRESS_MAINNET as `0x${string}`) ||
+    '0x0000000000000000000000000000000000000000',
+};
+
+// Block the contract was deployed — used as fromBlock for event queries
+export const LUDO_STATS_DEPLOY_BLOCK: Record<number, bigint> = {
+  42220: BigInt(process.env.NEXT_PUBLIC_LUDO_STATS_DEPLOY_BLOCK ?? '69782884'),
+};
+
 // ── Game ID generation ─────────────────────────────────────────────────────────
 
 /** Generates a random 32-byte game ID suitable for use as a bytes32 key. */

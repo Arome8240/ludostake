@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, Gamepad2, Trophy, X, ExternalLink, Trash2 } from 'lucide-react';
 import { PageTransition } from '@/components/page-transition';
 import Link from 'next/link';
-import { getGameHistory, clearGameHistory, getGameStats } from '@/lib/game-history';
+import { clearGameHistory } from '@/lib/game-history';
+import { useGameHistory } from '@/hooks/useGameHistory';
 import type { GameHistoryEntry } from '@/types/history';
 
 type Tab = 'all' | 'computer' | 'pvp';
@@ -115,13 +116,7 @@ function HistoryCard({ entry }: { entry: GameHistoryEntry }) {
 
 export default function HistoryPage() {
   const [tab, setTab] = useState<Tab>('all');
-  const [history, setHistory] = useState<GameHistoryEntry[]>([]);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setHistory(getGameHistory());
-    setLoaded(true);
-  }, []);
+  const { history, stats, loading, isOnChain, refresh } = useGameHistory();
 
   const filtered = history.filter((g) => {
     if (tab === 'computer') return g.mode === 'vs-computer';
@@ -129,12 +124,10 @@ export default function HistoryPage() {
     return true;
   });
 
-  const stats = getGameStats(history);
-
   const handleClear = () => {
-    if (confirm('Clear all game history?')) {
+    if (confirm('Clear local game history?')) {
       clearGameHistory();
-      setHistory([]);
+      refresh();
     }
   };
 
@@ -157,8 +150,16 @@ export default function HistoryPage() {
           )}
         </div>
 
+        {/* On-chain indicator */}
+        {isOnChain && (
+          <div className="flex items-center gap-1.5 text-[11px] text-primary/70">
+            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            Live from Celo mainnet
+          </div>
+        )}
+
         {/* Stats strip — only shown when there's data */}
-        {loaded && history.length > 0 && (
+        {!loading && history.length > 0 && (
           <div className="grid grid-cols-3 gap-2">
             {[
               { label: 'Games', value: stats.totalGames },
@@ -194,11 +195,11 @@ export default function HistoryPage() {
         </div>
 
         {/* List or empty state */}
-        {!loaded ? (
+        {loading ? (
           <div className="flex justify-center py-16">
             <div className="w-6 h-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           </div>
-        ) : filtered.length === 0 ? (
+        ) : !loading && filtered.length === 0 ? (
           <motion.div
             key={tab}
             initial={{ opacity: 0, y: 8 }}

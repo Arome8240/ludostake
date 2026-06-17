@@ -1,0 +1,82 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "LudoStats",
+  "sourceName": "contracts/LudoStats.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "player",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "bool",
+          "name": "won",
+          "type": "bool"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "mode",
+          "type": "uint8"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "durationSecs",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "stakeAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "ResultRecorded",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "won",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint8",
+          "name": "mode",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint32",
+          "name": "durationSecs",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "stakeAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "recordResult",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b506101308061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80633102b7d214602d575b600080fd5b603c60383660046099565b603e565b005b6040805160ff8516815263ffffffff841660208201529081018290524260608201528415159033907fea072970ff64653f98da207986b5edd164c2148080556774757c5f3f012868ec9060800160405180910390a350505050565b6000806000806080858703121560ae57600080fd5b8435801515811460bd57600080fd5b9350602085013560ff8116811460d257600080fd5b9250604085013563ffffffff8116811460ea57600080fd5b939692955092936060013592505056fea26469706673582212205176b98f3042abb002940e282b28f8b6da1b431ae7f8bb36e60c97a54f329d4c64736f6c634300081c0033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c80633102b7d214602d575b600080fd5b603c60383660046099565b603e565b005b6040805160ff8516815263ffffffff841660208201529081018290524260608201528415159033907fea072970ff64653f98da207986b5edd164c2148080556774757c5f3f012868ec9060800160405180910390a350505050565b6000806000806080858703121560ae57600080fd5b8435801515811460bd57600080fd5b9350602085013560ff8116811460d257600080fd5b9250604085013563ffffffff8116811460ea57600080fd5b939692955092936060013592505056fea26469706673582212205176b98f3042abb002940e282b28f8b6da1b431ae7f8bb36e60c97a54f329d4c64736f6c634300081c0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
