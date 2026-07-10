@@ -175,16 +175,14 @@ function OnboardingScreen({ onComplete }: { onComplete: () => void }) {
                 <div
                   className={`relative w-48 h-48 rounded-full ${slide.glow} border ${slide.ring} flex items-center justify-center`}
                 >
-                  <motion.span
-                    key={slide.emoji}
+                  <motion.div
+                    key={idx}
                     initial={{ scale: 0.5, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.05 }}
-                    className="text-7xl leading-none"
-                    style={{ userSelect: 'none' }}
                   >
-                    {slide.emoji}
-                  </motion.span>
+                    <slide.Icon className={`w-20 h-20 ${slide.iconColor}`} strokeWidth={1.5} />
+                  </motion.div>
                 </div>
               </div>
             </div>
@@ -349,7 +347,6 @@ export function WalletGuard({ children }: WalletGuardProps) {
 
   useEffect(() => {
     setMounted(true);
-    setOnboarded(localStorage.getItem(ONBOARDING_KEY) === 'true');
   }, []);
 
   const { isConnected, isConnecting, isMiniPay } = useMiniPay();
@@ -357,14 +354,7 @@ export function WalletGuard({ children }: WalletGuardProps) {
   if (!mounted) return <LoadingScreen />;
 
   if (!onboarded) {
-    return (
-      <OnboardingScreen
-        onComplete={() => {
-          localStorage.setItem(ONBOARDING_KEY, 'true');
-          setOnboarded(true);
-        }}
-      />
-    );
+    return <OnboardingScreen onComplete={() => setOnboarded(true)} />;
   }
 
   if (!isConnected && (isConnecting || isMiniPay)) return <LoadingScreen />;
