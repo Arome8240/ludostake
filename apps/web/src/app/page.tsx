@@ -41,9 +41,9 @@ const MODES: Mode[] = [
 ];
 
 export default function HomePage() {
-  const { truncatedAddress, cUSDBalance, isBalanceLoading } = useMiniPay();
+  const { truncatedAddress, celoBalance, isBalanceLoading } = useMiniPay();
 
-  const balance = cUSDBalance?.formatted ? parseFloat(cUSDBalance.formatted).toFixed(2) : null;
+  const balance = celoBalance?.formatted ? parseFloat(celoBalance.formatted).toFixed(4) : null;
 
   return (
     <PageTransition>
@@ -68,15 +68,15 @@ export default function HomePage() {
           className="rounded-2xl bg-surface-raised border border-surface-border p-5 shadow-card"
         >
           <div className="flex items-center gap-2 mb-2">
-            <Coins className="w-4 h-4 text-muted-foreground" />
-            <p className="text-xs text-muted-foreground">cUSD Balance</p>
+            <Zap className="w-4 h-4 text-muted-foreground" />
+            <p className="text-xs text-muted-foreground">CELO Balance</p>
           </div>
           {isBalanceLoading || balance === null ? (
             <div className="h-9 w-36 skeleton rounded-lg" />
           ) : (
             <p className="text-3xl font-bold">
               {balance}
-              <span className="text-base font-medium text-muted-foreground ml-2">cUSD</span>
+              <span className="text-base font-medium text-muted-foreground ml-2">CELO</span>
             </p>
           )}
         </motion.div>
