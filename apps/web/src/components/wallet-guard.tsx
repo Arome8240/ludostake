@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useMiniPay } from '@/hooks/useMiniPay';
 import { ConnectButton } from '@/components/connect-button';
-import { ChevronRight, Dices, Swords, Coins, Zap, type LucideIcon } from 'lucide-react';
+import { Dices, Swords, Coins, Zap, type LucideIcon } from 'lucide-react';
 
 // ── Onboarding slide data ─────────────────────────────────────────────────────
 
