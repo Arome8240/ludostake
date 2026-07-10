@@ -138,7 +138,7 @@ export default function ComputerPlayPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.28 }}
           onClick={handleStart}
-          className="mt-auto flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-primary text-white font-bold text-base active:scale-95 transition-transform glow-green"
+          className="mt-auto flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-primary text-white font-bold text-base active:scale-95 transition-transform"
         >
           Start Game
           <ChevronRight className="w-4 h-4" />

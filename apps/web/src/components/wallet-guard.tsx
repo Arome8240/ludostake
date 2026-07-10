@@ -69,7 +69,7 @@ function OnboardingScreen({ onComplete }: { onComplete: () => void }) {
             initial={{ scale: 0.7, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            className="w-20 h-20 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center mb-5 glow-green"
+            className="w-20 h-20 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center mb-5"
           >
             <Dices className="w-10 h-10 text-primary" strokeWidth={1.5} />
           </motion.div>
@@ -101,7 +101,7 @@ function OnboardingScreen({ onComplete }: { onComplete: () => void }) {
           {SLIDES.slice(1).map((slide) => (
             <div
               key={slide.title}
-              className={`flex items-start gap-4 p-4 rounded-2xl border ${slide.ring} ${slide.glow}`}
+              className={`flex items-start gap-4 p-4 rounded-2xl border ${slide.ring}`}
             >
               <div className={`mt-0.5 shrink-0`}>
                 <slide.Icon className={`w-5 h-5 ${slide.iconColor}`} strokeWidth={1.5} />
@@ -163,7 +163,7 @@ function ConnectScreen() {
         transition={{ type: 'spring', stiffness: 260, damping: 20 }}
         className="relative"
       >
-        <div className="w-24 h-24 rounded-3xl bg-primary/15 border border-primary/30 flex items-center justify-center text-5xl glow-green">
+        <div className="w-24 h-24 rounded-3xl bg-primary/15 border border-primary/30 flex items-center justify-center text-5xl">
           🎲
         </div>
       </motion.div>

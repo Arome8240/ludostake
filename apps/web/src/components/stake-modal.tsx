@@ -325,7 +325,7 @@ export function StakeModal({ open, stakeAmount, onClose, onSuccess }: StakeModal
                     {/* CTA */}
                     <button
                       onClick={handleConfirm}
-                      className="w-full py-4 rounded-xl bg-primary text-white font-bold text-base active:scale-95 transition-transform tap-target glow-green"
+                      className="w-full py-4 rounded-xl bg-primary text-white font-bold text-base active:scale-95 transition-transform tap-target"
                     >
                       Approve &amp; Stake {breakdown.stake} cUSD
                     </button>

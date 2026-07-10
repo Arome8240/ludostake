@@ -48,7 +48,7 @@ export default function PvpPlayPage() {
                 onClick={() => setSelectedStake(amount)}
                 className={`py-3 rounded-xl text-sm font-bold transition-all active:scale-95 ${
                   selectedStake === amount
-                    ? 'bg-gold text-gold-foreground shadow-glow-gold'
+                    ? 'bg-gold text-gold-foreground'
                     : 'bg-surface-raised border border-surface-border text-muted-foreground'
                 }`}
               >
@@ -93,7 +93,7 @@ export default function PvpPlayPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
           onClick={() => setShowModal(true)}
-          className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-gold text-gold-foreground font-bold text-base active:scale-95 transition-transform shadow-glow-gold"
+          className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-gold text-gold-foreground font-bold text-base active:scale-95 transition-transform"
         >
           Find Match — {selectedStake} cUSD
           <ChevronRight className="w-4 h-4" />

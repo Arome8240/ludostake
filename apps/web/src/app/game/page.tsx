@@ -318,7 +318,7 @@ function GameContent() {
               whileTap={canRoll ? { scale: 0.93 } : {}}
               className={`w-full rounded-2xl border transition-all ${
                 canRoll
-                  ? 'bg-surface-raised border-primary/40 shadow-glow active:scale-95 cursor-pointer'
+                  ? 'bg-surface-raised border-primary/40 active:scale-95 cursor-pointer'
                   : 'bg-surface-raised border-surface-border cursor-not-allowed'
               }`}
             >

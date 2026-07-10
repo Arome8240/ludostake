@@ -60,7 +60,7 @@ function ResultContent() {
           transition={{ type: 'spring', stiffness: 280, damping: 20, delay: 0.1 }}
           className={`w-24 h-24 rounded-3xl flex items-center justify-center ${
             isWin
-              ? 'bg-gold/20 border-2 border-gold shadow-glow-gold'
+              ? 'bg-gold/20 border-2 border-gold'
               : isDraw
                 ? 'bg-surface-raised border-2 border-surface-border'
                 : 'bg-loss/20 border-2 border-loss/50'
@@ -144,7 +144,7 @@ function ResultContent() {
         >
           <button
             onClick={handlePlayAgain}
-            className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-primary text-white font-bold text-base active:scale-95 transition-transform glow-green"
+            className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-primary text-white font-bold text-base active:scale-95 transition-transform"
           >
             <RotateCcw className="w-4 h-4" />
             Play Again
