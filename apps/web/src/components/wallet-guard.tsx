@@ -4,15 +4,24 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { useMiniPay } from '@/hooks/useMiniPay';
 import { ConnectButton } from '@/components/connect-button';
-import { ChevronRight } from 'lucide-react';
-
-const ONBOARDING_KEY = 'ludo-onboarded-v1';
+import { ChevronRight, Dices, Swords, Coins, Zap, type LucideIcon } from 'lucide-react';
 
 // ── Onboarding slide data ─────────────────────────────────────────────────────
 
-const SLIDES = [
+interface Slide {
+  Icon: LucideIcon;
+  iconColor: string;
+  ring: string;
+  glow: string;
+  blur: string;
+  title: string;
+  body: string;
+}
+
+const SLIDES: Slide[] = [
   {
-    emoji: '🎲',
+    Icon: Dices,
+    iconColor: 'text-primary',
     ring: 'border-primary/50',
     glow: 'bg-primary/25',
     blur: 'bg-primary/40',
@@ -20,7 +29,8 @@ const SLIDES = [
     body: 'The classic Nigerian board game — now with real cUSD on the line.',
   },
   {
-    emoji: '🎯',
+    Icon: Swords,
+    iconColor: 'text-yellow-400',
     ring: 'border-yellow-500/50',
     glow: 'bg-yellow-500/20',
     blur: 'bg-yellow-500/40',
@@ -28,7 +38,8 @@ const SLIDES = [
     body: 'Roll 6 + 3? Exit a piece then move it 3 steps — each die is its own move, just like real Naija Ludo.',
   },
   {
-    emoji: '💰',
+    Icon: Coins,
+    iconColor: 'text-yellow-400',
     ring: 'border-yellow-500/50',
     glow: 'bg-yellow-500/20',
     blur: 'bg-yellow-500/40',
@@ -36,14 +47,15 @@ const SLIDES = [
     body: 'Practice free vs the AI, or wager Celo Dollars against a live opponent. Winner collects the pot instantly.',
   },
   {
-    emoji: '⚡',
+    Icon: Zap,
+    iconColor: 'text-primary',
     ring: 'border-primary/50',
     glow: 'bg-primary/25',
     blur: 'bg-primary/40',
     title: 'Built on Celo',
     body: 'Near-zero gas fees. Every result recorded on-chain. Works natively in MiniPay — no setup needed.',
   },
-] as const;
+];
 
 // The 4 Ludo piece colours — floats as ambient accents around the main icon
 const PIECE_DOTS = [
