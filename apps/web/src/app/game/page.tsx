@@ -160,6 +160,7 @@ function GameContent() {
     selectablePieces: [],
     winner: null,
     scores: { red: 0, green: 0, yellow: 0, blue: 0 },
+    humanColors: ['red', 'yellow'],
   });
 
   const [rollTrigger, setRollTrigger] = useState(0);
@@ -177,7 +178,7 @@ function GameContent() {
       }
       if (s.phase === 'gameover' && s.winner && !savedRef.current) {
         savedRef.current = true;
-        const isWin = s.winner === 'red';
+        const isWin = s.humanColors.includes(s.winner);
         const result = isWin ? 'win' : 'loss';
         const durationSeconds = Math.floor((Date.now() - startTimeRef.current) / 1000);
 
@@ -221,7 +222,7 @@ function GameContent() {
     setRollTrigger((t) => t + 1);
   };
 
-  const isHumanTurn = uiState.currentPlayer === 'red';
+  const isHumanTurn = uiState.humanColors.includes(uiState.currentPlayer);
   const canRoll = uiState.phase === 'rolling' && isHumanTurn && !rolling;
 
   return (
@@ -298,7 +299,7 @@ function GameContent() {
           const statusText = uiState.forfeited
             ? 'Turn forfeited!'
             : uiState.phase === 'gameover'
-              ? uiState.winner === 'red'
+              ? uiState.humanColors.includes(uiState.winner!)
                 ? '🎉 You win!'
                 : 'You lost'
               : uiState.phase === 'rolling' && isHumanTurn

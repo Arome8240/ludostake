@@ -28,6 +28,7 @@ export interface GameUIState {
   selectablePieces: string[]; // `${color}-${id}`
   winner: PlayerColor | null;
   scores: Record<PlayerColor, number>;
+  humanColors: PlayerColor[]; // which colors the human player controls
   forfeited?: boolean; // true for one emit when 3 consecutive bonus turns are used up
 }
 
@@ -61,7 +62,7 @@ export class LudoScene extends Phaser.Scene {
 
   private pieces: Piece[] = [];
   private phase: GamePhase = 'rolling';
-  private playerOrder: PlayerColor[] = ['red', 'green'];
+  private playerOrder: PlayerColor[] = ['red', 'green', 'yellow', 'blue'];
   private currentIdx: number = 0;
   private diceVals: [number, number] = [0, 0];
   private remainingMoves: number[] = []; // die values still to be played this turn
@@ -71,7 +72,7 @@ export class LudoScene extends Phaser.Scene {
   private isHuman: Record<PlayerColor, boolean> = {
     red: true,
     green: false,
-    yellow: false,
+    yellow: true,
     blue: false,
   };
   private scores: Record<PlayerColor, number> = {
@@ -90,6 +91,15 @@ export class LudoScene extends Phaser.Scene {
   // ── Lifecycle ────────────────────────────────────────────────────────────────
 
   create() {
+    // Randomly assign diagonal pairs: human gets red+yellow OR blue+green
+    const humanPairA = Math.random() < 0.5;
+    this.isHuman = {
+      red: humanPairA,
+      yellow: humanPairA,
+      green: !humanPairA,
+      blue: !humanPairA,
+    };
+
     this.drawBoard();
     this.initPieces();
     this.emitState();
@@ -466,6 +476,7 @@ export class LudoScene extends Phaser.Scene {
       selectablePieces: selectable,
       winner: this.phase === 'gameover' ? this.currentColor() : null,
       scores: { ...this.scores },
+      humanColors: (Object.keys(this.isHuman) as PlayerColor[]).filter((c) => this.isHuman[c]),
       forfeited,
     });
   }
