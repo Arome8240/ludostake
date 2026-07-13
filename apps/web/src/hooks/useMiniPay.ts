@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useAccount, useBalance, useConnect, useDisconnect } from 'wagmi';
 
-// cUSD contract addresses per network
-const CUSD_ADDRESS: Record<number, `0x${string}`> = {
+// USDm (Mento Dollar) contract addresses per network
+const USDM_ADDRESS: Record<number, `0x${string}`> = {
   42220: '0x765DE816845861e75A25fCA122bb6898B8B1282a', // Celo mainnet
   44787: '0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1', // Celo Alfajores testnet
 };
 
-const FALLBACK_CUSD = CUSD_ADDRESS[44787]; // default to testnet during dev
+const FALLBACK_USDM = USDM_ADDRESS[44787]; // default to testnet during dev
 
 export interface MiniPayState {
   address: `0x${string}` | undefined;
@@ -17,7 +17,7 @@ export interface MiniPayState {
   isConnected: boolean;
   isConnecting: boolean;
   isMiniPay: boolean;
-  cUSDBalance: { value: bigint; formatted: string; symbol: string } | undefined;
+  usdmBalance: { value: bigint; formatted: string; symbol: string } | undefined;
   celoBalance: { value: bigint; formatted: string; symbol: string } | undefined;
   isBalanceLoading: boolean;
   chainId: number | undefined;
@@ -33,15 +33,15 @@ export function useMiniPay(): MiniPayState {
   const { disconnect } = useDisconnect();
 
   const chainId = chain?.id;
-  const cUSDAddress = chainId ? (CUSD_ADDRESS[chainId] ?? FALLBACK_CUSD) : FALLBACK_CUSD;
+  const usdmAddress = chainId ? (USDM_ADDRESS[chainId] ?? FALLBACK_USDM) : FALLBACK_USDM;
 
-  const { data: cUSDData, isLoading: isLoadingCUSD } = useBalance({
+  const { data: usdmData, isLoading: isLoadingUSDM } = useBalance({
     address,
-    token: cUSDAddress,
+    token: usdmAddress,
     query: { enabled: isConnected && !!address },
   });
 
-  const { data: celoData, isLoading: isLoadingCelo } = useBalance({
+  const { data: celoData, isLoading: isLoadingCELO } = useBalance({
     address,
     query: { enabled: isConnected && !!address },
   });
@@ -65,13 +65,13 @@ export function useMiniPay(): MiniPayState {
     isConnected,
     isConnecting,
     isMiniPay,
-    cUSDBalance: cUSDData
-      ? { value: cUSDData.value, formatted: cUSDData.formatted, symbol: cUSDData.symbol }
+    usdmBalance: usdmData
+      ? { value: usdmData.value, formatted: usdmData.formatted, symbol: usdmData.symbol }
       : undefined,
     celoBalance: celoData
       ? { value: celoData.value, formatted: celoData.formatted, symbol: celoData.symbol }
       : undefined,
-    isBalanceLoading: isLoadingCUSD || isLoadingCelo,
+    isBalanceLoading: isLoadingUSDM || isLoadingCELO,
     chainId,
     connect: connectWallet,
     disconnect,

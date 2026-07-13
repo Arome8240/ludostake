@@ -31,8 +31,8 @@ export const LUDO_STAKES_ABI = parseAbi([
   'event GameCancelled(bytes32 indexed gameId, address indexed refundedTo)',
 ]);
 
-// cUSD ERC-20 ABI (only what we need: approve + allowance)
-export const CUSD_ABI = parseAbi([
+// USDm ERC-20 ABI (only what we need: approve + allowance)
+export const USDM_ABI = parseAbi([
   'function approve(address spender, uint256 amount) external returns (bool)',
   'function allowance(address owner, address spender) external view returns (uint256)',
   'function balanceOf(address account) external view returns (uint256)',
@@ -41,8 +41,8 @@ export const CUSD_ABI = parseAbi([
 
 // ── Addresses ──────────────────────────────────────────────────────────────────
 
-export const CUSD_ADDRESS: Record<number, `0x${string}`> = {
-  42220: '0x765DE816845861e75A25fCA122bb6898B8B1282a', // Celo mainnet
+export const USDM_ADDRESS: Record<number, `0x${string}`> = {
+  42220: '0x765DE816845861e75A25fCA122bb6898B8B1282a', // Celo mainnet (USDm / Mento Dollar)
   44787: '0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1', // Celo Alfajores
 };
 
@@ -61,16 +61,16 @@ export const LUDO_STAKES_ADDRESS: Record<number, `0x${string}`> = {
 export const FEE_BPS = 800n; // 8%
 export const BPS_DENOM = 10_000n;
 
-/** cUSD uses 18 decimals on Celo */
-export const CUSD_DECIMALS = 18;
+/** USDm uses 18 decimals on Celo */
+export const USDM_DECIMALS = 18;
 
-// ── Preset stake amounts (human-readable cUSD → bigint wei) ───────────────────
+// ── Preset stake amounts (human-readable USDm → bigint wei) ───────────────────
 
 export const STAKE_PRESETS = ['0.10', '0.50', '1.00', '2.00', '5.00'] as const;
 export type StakePreset = (typeof STAKE_PRESETS)[number];
 
-export function stakeToWei(cusdAmount: string): bigint {
-  return parseUnits(cusdAmount, CUSD_DECIMALS);
+export function stakeToWei(usdmAmount: string): bigint {
+  return parseUnits(usdmAmount, USDM_DECIMALS);
 }
 
 export function weiToStake(wei: bigint): string {
@@ -92,14 +92,14 @@ export function calcNetReward(stakeWei: bigint): bigint {
 /**
  * Returns human-readable breakdown: stake, pot, fee, and net reward.
  */
-export function stakeBreakdown(cusdAmount: string) {
-  const stakeWei = stakeToWei(cusdAmount);
+export function stakeBreakdown(usdmAmount: string) {
+  const stakeWei = stakeToWei(usdmAmount);
   const potWei = stakeWei * 2n;
   const feeWei = (potWei * FEE_BPS) / BPS_DENOM;
   const rewardWei = potWei - feeWei;
 
   return {
-    stake: cusdAmount,
+    stake: usdmAmount,
     pot: weiToStake(potWei),
     fee: weiToStake(feeWei),
     reward: weiToStake(rewardWei),

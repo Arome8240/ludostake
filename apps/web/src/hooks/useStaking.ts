@@ -3,8 +3,8 @@
 import { useCallback, useState } from 'react';
 import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import {
-  CUSD_ABI,
-  CUSD_ADDRESS,
+  USDM_ABI,
+  USDM_ADDRESS,
   LUDO_STAKES_ABI,
   LUDO_STAKES_ADDRESS,
   calcNetReward,
