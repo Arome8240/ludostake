@@ -18,7 +18,7 @@ export function useRecordResult() {
       won: boolean,
       mode: 'computer' | 'pvp',
       durationSecs: number,
-      stakeAmountCUSD: string
+      stakeAmountUSDm: string
     ): Promise<`0x${string}` | null> => {
       if (!address || !chainId) return null;
       const contractAddress = LUDO_STATS_ADDRESS[chainId];
@@ -34,7 +34,7 @@ export function useRecordResult() {
             won,
             mode === 'computer' ? 0 : 1,
             durationSecs,
-            stakeToWei(stakeAmountCUSD || '0'),
+            stakeToWei(stakeAmountUSDm || '0'),
           ],
         });
         return txHash;

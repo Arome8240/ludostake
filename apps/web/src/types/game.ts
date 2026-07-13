@@ -35,5 +35,5 @@ export interface GameState {
   winner: string | null;
   startedAt: number | null;
   endedAt: number | null;
-  stakeAmount: string; // cUSD amount as string
+  stakeAmount: string; // USDm amount as string
 }

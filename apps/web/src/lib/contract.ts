@@ -74,7 +74,7 @@ export function stakeToWei(usdmAmount: string): bigint {
 }
 
 export function weiToStake(wei: bigint): string {
-  return formatUnits(wei, CUSD_DECIMALS);
+  return formatUnits(wei, USDM_DECIMALS);
 }
 
 // ── Fee calculations ───────────────────────────────────────────────────────────
