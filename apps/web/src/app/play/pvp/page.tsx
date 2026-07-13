@@ -3,14 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Users, ChevronRight, Info } from 'lucide-react';
+import { ArrowLeft, Users, ChevronRight, Info, Wallet } from 'lucide-react';
 import { PageTransition } from '@/components/page-transition';
 import { StakeModal } from '@/components/stake-modal';
+import { ConnectButton } from '@/components/connect-button';
+import { useMiniPay } from '@/hooks/useMiniPay';
 import { STAKE_PRESETS, stakeBreakdown } from '@/lib/contract';
 import type { StakePreset } from '@/lib/contract';
 
 export default function PvpPlayPage() {
   const router = useRouter();
+  const { isConnected } = useMiniPay();
   const [selectedStake, setSelectedStake] = useState<StakePreset>('1.00');
   const [showModal, setShowModal] = useState(false);
 
@@ -20,6 +23,51 @@ export default function PvpPlayPage() {
     setShowModal(false);
     router.push(`/play/lobby?gameId=${gameId}&stake=${selectedStake}`);
   };
+
+  if (!isConnected) {
+    return (
+      <PageTransition>
+        <div className="flex flex-col items-center justify-center flex-1 px-6 gap-6 text-center">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+            className="w-16 h-16 rounded-2xl bg-gold/15 border border-gold/30 flex items-center justify-center"
+          >
+            <Wallet className="w-8 h-8 text-gold" strokeWidth={1.5} />
+          </motion.div>
+          <motion.div
+            initial={{ y: 12, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.08 }}
+            className="space-y-2"
+          >
+            <h2 className="text-xl font-bold tracking-tight">Connect to play vs Players</h2>
+            <p className="text-sm text-muted-foreground max-w-[260px]">
+              You need a wallet to stake cUSD and join a live match.
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ y: 12, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.15 }}
+            className="w-full max-w-xs"
+          >
+            <ConnectButton />
+          </motion.div>
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            onClick={() => router.back()}
+            className="text-sm text-muted-foreground"
+          >
+            ← Go back
+          </motion.button>
+        </div>
+      </PageTransition>
+    );
+  }
 
   return (
     <PageTransition>

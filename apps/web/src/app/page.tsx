@@ -41,7 +41,7 @@ const MODES: Mode[] = [
 ];
 
 export default function HomePage() {
-  const { truncatedAddress, celoBalance, isBalanceLoading } = useMiniPay();
+  const { truncatedAddress, celoBalance, isBalanceLoading, isConnected } = useMiniPay();
 
   const balance = celoBalance?.formatted ? parseFloat(celoBalance.formatted).toFixed(4) : null;
 
@@ -51,8 +51,14 @@ export default function HomePage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs text-muted-foreground">Connected as</p>
-            <p className="text-sm font-mono font-medium">{truncatedAddress ?? '—'}</p>
+            {isConnected ? (
+              <>
+                <p className="text-xs text-muted-foreground">Connected as</p>
+                <p className="text-sm font-mono font-medium">{truncatedAddress}</p>
+              </>
+            ) : (
+              <p className="text-sm font-medium text-muted-foreground">Playing as guest</p>
+            )}
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
             <Zap className="w-3 h-3 text-primary" />
