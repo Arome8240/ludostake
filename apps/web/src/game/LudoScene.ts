@@ -9,6 +9,7 @@ import {
   HOME_BASE_POS,
   TRACK_ENTRY,
   SAFE_SQUARES,
+  UNIVERSAL_SAFE_SQUARES,
   COLOR_HEX,
   getCellType,
   getPieceGridPos,
@@ -284,7 +285,7 @@ export class LudoScene extends Phaser.Scene {
           }
         }
 
-        // Play remaining dice or finish turn
+        this.repositionSharedSquares();
         this.startNextMove();
       },
     });
@@ -314,6 +315,7 @@ export class LudoScene extends Phaser.Scene {
           this.emitState();
           return;
         }
+        this.repositionSharedSquares();
         this.startNextMove();
       },
     });
@@ -326,7 +328,9 @@ export class LudoScene extends Phaser.Scene {
     if (mover.pos < 0 || mover.pos >= 52) return false;
 
     const moverAbs = (mover.pos + TRACK_ENTRY[mover.color]) % 52;
-    if (SAFE_SQUARES.has(moverAbs)) return false;
+
+    // Universal safe squares protect ALL pieces — no captures here
+    if (UNIVERSAL_SAFE_SQUARES.has(moverAbs)) return false;
 
     let captured = false;
 
@@ -335,8 +339,11 @@ export class LudoScene extends Phaser.Scene {
       const pAbs = (p.pos + TRACK_ENTRY[p.color]) % 52;
       if (pAbs !== moverAbs) continue;
 
-      // A blockade (2+ same-color pieces) cannot be captured — isPathBlocked already
-      // prevents landing there, but guard here too
+      // Starting squares (0,13,26,39) only protect the NATIVE color.
+      // A foreign piece parked on another color's starting square CAN be captured.
+      if (SAFE_SQUARES.has(pAbs) && TRACK_ENTRY[p.color] === pAbs) continue;
+
+      // A blockade (2+ same-color pieces) cannot be captured
       const siblings = this.pieces.filter(
         (q) =>
           q !== p &&
@@ -345,7 +352,7 @@ export class LudoScene extends Phaser.Scene {
           q.pos < 52 &&
           (q.pos + TRACK_ENTRY[q.color]) % 52 === pAbs
       );
-      if (siblings.length >= 1) continue; // it's a blockade
+      if (siblings.length >= 1) continue;
 
       // Captured — send back to yard
       p.pos = -1;
@@ -357,12 +364,45 @@ export class LudoScene extends Phaser.Scene {
         y: by,
         duration: 400,
         ease: 'Back.easeIn',
+        onComplete: () => this.repositionSharedSquares(),
       });
       this.capturesMade[mover.color]++;
       captured = true;
     }
 
     return captured;
+  }
+
+  // Offset pieces that share the same cell so neither is hidden behind the other
+  private repositionSharedSquares() {
+    const byCell = new Map<string, Piece[]>();
+
+    for (const p of this.pieces) {
+      if (p.pos < 0) continue; // base pieces have fixed yard positions
+      const [r, c] = getPieceGridPos(p.color, p.id, p.pos);
+      const key = `${r},${c}`;
+      if (!byCell.has(key)) byCell.set(key, []);
+      byCell.get(key)!.push(p);
+    }
+
+    for (const shared of byCell.values()) {
+      const p0 = shared[0];
+      const [r, c] = getPieceGridPos(p0.color, p0.id, p0.pos);
+      const [cx, cy] = cellCenter(r, c);
+
+      if (shared.length === 1) {
+        p0.gfx.setPosition(cx, cy);
+        p0.hl.setPosition(cx, cy);
+      } else {
+        // Sort consistently (color then id) so the same piece always gets the same slot
+        shared.sort((a, b) => a.color.localeCompare(b.color) || a.id - b.id);
+        shared.forEach((p, i) => {
+          const dx = i === 0 ? -5 : 5;
+          p.gfx.setPosition(cx + dx, cy);
+          p.hl.setPosition(cx + dx, cy);
+        });
+      }
+    }
   }
 
   // ── Win condition ────────────────────────────────────────────────────────────

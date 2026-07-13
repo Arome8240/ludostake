@@ -150,8 +150,12 @@ export const TRACK_ENTRY: Record<PlayerColor, number> = {
   blue: 39,
 };
 
-// ── Safe squares (absolute outer path indices — no captures allowed here) ─────
+// ── Safe squares (absolute outer path indices) ────────────────────────────────
+// Universal: protect ALL pieces regardless of color
+export const UNIVERSAL_SAFE_SQUARES = new Set<number>([8, 21, 34, 47]);
+// Combined (used for path-blocking logic — blockades still can't form on any safe sq)
 export const SAFE_SQUARES = new Set<number>([0, 8, 13, 21, 26, 34, 39, 47]);
+// Starting squares (0,13,26,39) only protect their NATIVE color's pieces
 
 // ── Phaser hex colors ──────────────────────────────────────────────────────────
 export const COLOR_HEX: Record<PlayerColor, number> = {
