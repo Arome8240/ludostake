@@ -92,14 +92,19 @@ export class LudoScene extends Phaser.Scene {
   // ── Lifecycle ────────────────────────────────────────────────────────────────
 
   create() {
-    // Randomly assign diagonal pairs: human gets red+yellow OR blue+green
-    const humanPairA = Math.random() < 0.5;
-    this.isHuman = {
-      red: humanPairA,
-      yellow: humanPairA,
-      green: !humanPairA,
-      blue: !humanPairA,
-    };
+    if (this.cfg.mode === 'pvp') {
+      // All four colors are human-controlled (pass-and-play)
+      this.isHuman = { red: true, green: true, yellow: true, blue: true };
+    } else {
+      // vs Computer: randomly assign diagonal pairs
+      const humanPairA = Math.random() < 0.5;
+      this.isHuman = {
+        red: humanPairA,
+        yellow: humanPairA,
+        green: !humanPairA,
+        blue: !humanPairA,
+      };
+    }
 
     this.drawBoard();
     this.initPieces();
@@ -617,16 +622,11 @@ export class LudoScene extends Phaser.Scene {
     g.fillStyle(0x3b82f6, 0.85);
     g.fillTriangle(ox, oy + cs, ox + cs, oy + cs, mx, my);
 
-    // Safe square markers — starting squares use their home color; mid-path stars stay green
-    const startingByIdx = new Map<number, PlayerColor>(
-      (Object.entries(TRACK_ENTRY) as [PlayerColor, number][]).map(([color, idx]) => [idx, color])
-    );
-    for (const idx of SAFE_SQUARES) {
-      const [sr, sc] = OUTER_PATH[idx];
-      const [sx, sy] = cellCenter(sr, sc);
-      const nativeColor = startingByIdx.get(idx);
-      g.fillStyle(nativeColor ? COLOR_HEX[nativeColor] : 0x16a34a, 0.8);
-      g.fillCircle(sx, sy, 4);
+    // Starting squares — tint the cell with its home color
+    for (const [color, idx] of Object.entries(TRACK_ENTRY) as [PlayerColor, number][]) {
+      const [row, col] = OUTER_PATH[idx];
+      g.fillStyle(COLOR_HEX[color], 0.45);
+      g.fillRect(col * CELL, row * CELL, CELL, CELL);
     }
 
     // Grid lines
