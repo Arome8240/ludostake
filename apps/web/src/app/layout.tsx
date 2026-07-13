@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   title: 'Ludo Stakes',
-  description: 'Stake cUSD and play Ludo on Celo — powered by MiniPay',
+  description: 'Stake USDm and play Ludo on Celo — powered by MiniPay',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,

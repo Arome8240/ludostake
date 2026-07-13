@@ -7,7 +7,7 @@ import { PageTransition } from '@/components/page-transition';
 import { useMiniPay } from '@/hooks/useMiniPay';
 
 export default function ProfilePage() {
-  const { address, truncatedAddress, cUSDBalance, celoBalance, chainId, disconnect } = useMiniPay();
+  const { address, truncatedAddress, usdmBalance, celoBalance, chainId, disconnect } = useMiniPay();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -19,13 +19,13 @@ export default function ProfilePage() {
 
   const network =
     chainId === 42220 ? 'Celo Mainnet' : chainId === 44787 ? 'Alfajores Testnet' : 'Unknown';
-  const cusdFormatted = cUSDBalance?.formatted ? parseFloat(cUSDBalance.formatted).toFixed(4) : '—';
+  const usdmFormatted = usdmBalance?.formatted ? parseFloat(usdmBalance.formatted).toFixed(4) : '—';
   const celoFormatted = celoBalance?.formatted ? parseFloat(celoBalance.formatted).toFixed(4) : '—';
 
   const STATS = [
     { icon: Trophy, label: 'Total Games', value: '0' },
     { icon: TrendingUp, label: 'Win Rate', value: '—' },
-    { icon: Coins, label: 'Total Earned', value: '0 cUSD' },
+    { icon: Coins, label: 'Total Earned', value: '0 USDm' },
   ];
 
   return (
@@ -60,8 +60,8 @@ export default function ProfilePage() {
         {/* Balances */}
         <div className="rounded-2xl bg-surface-raised border border-surface-border overflow-hidden">
           <div className="flex justify-between items-center px-4 py-3 border-b border-surface-border">
-            <span className="text-sm text-muted-foreground">cUSD</span>
-            <span className="text-sm font-bold">{cusdFormatted}</span>
+            <span className="text-sm text-muted-foreground">USDm</span>
+            <span className="text-sm font-bold">{usdmFormatted}</span>
           </div>
           <div className="flex justify-between items-center px-4 py-3">
             <span className="text-sm text-muted-foreground">CELO</span>

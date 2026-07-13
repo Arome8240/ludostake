@@ -81,7 +81,7 @@ export default function ComputerPlayPage() {
         </div>
 
         <p className="text-sm text-muted-foreground">
-          Free to play — no cUSD required. Choose your challenge level.
+          Free to play — no USDm required. Choose your challenge level.
         </p>
 
         {/* Difficulty cards */}

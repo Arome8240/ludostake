@@ -31,7 +31,7 @@ const MODES: Mode[] = [
   {
     href: '/play/pvp',
     label: 'vs Players',
-    desc: 'Stake cUSD against real opponents',
+    desc: 'Stake USDm against real opponents',
     icon: Users,
     color: 'text-gold',
     bg: 'bg-gold/10',
@@ -92,7 +92,7 @@ export default function HomePage() {
           {[
             { icon: Trophy, label: 'Games', value: '0' },
             { icon: TrendingUp, label: 'Win Rate', value: '0%' },
-            { icon: Coins, label: 'Earned', value: '0 cUSD' },
+            { icon: Coins, label: 'Earned', value: '0 USDm' },
           ].map(({ icon: Icon, label, value }) => (
             <div
               key={label}

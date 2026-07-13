@@ -102,7 +102,7 @@ function ResultContent() {
               <div className="flex justify-between items-center px-4 py-3 border-b border-surface-border bg-gold/5">
                 <span className="text-sm font-semibold">You earned</span>
                 <span className="text-base font-bold text-gold">
-                  {parseFloat(reward).toFixed(2)} cUSD
+                  {parseFloat(reward).toFixed(2)} USDm
                 </span>
               </div>
             )}
@@ -112,7 +112,7 @@ function ResultContent() {
                   {isWin ? 'Your stake' : 'Stake lost'}
                 </span>
                 <span className={`text-sm font-medium ${!isWin && !isDraw ? 'text-loss' : ''}`}>
-                  {parseFloat(stake).toFixed(2)} cUSD
+                  {parseFloat(stake).toFixed(2)} USDm
                 </span>
               </div>
             )}

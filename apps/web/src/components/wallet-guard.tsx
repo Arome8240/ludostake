@@ -24,7 +24,7 @@ const SLIDES: Slide[] = [
     glow: 'bg-primary/25',
     blur: 'bg-primary/40',
     title: 'Ludo Stakes',
-    body: 'The classic Nigerian board game — now with real cUSD on the line.',
+    body: 'The classic Nigerian board game — now with real USDm on the line.',
   },
   {
     Icon: Swords,
@@ -41,7 +41,7 @@ const SLIDES: Slide[] = [
     ring: 'border-yellow-500/50',
     glow: 'bg-yellow-500/20',
     blur: 'bg-yellow-500/40',
-    title: 'Stake Real cUSD',
+    title: 'Stake Real USDm',
     body: 'Practice free vs the AI, or wager Celo Dollars against a live opponent. Winner collects the pot instantly.',
   },
   {

@@ -68,7 +68,7 @@ function LobbyContent() {
         {/* Status */}
         <div className="text-center">
           <p className="text-xl font-bold">Finding opponent…</p>
-          <p className="text-sm text-muted-foreground mt-1">Stake locked · {stake} cUSD</p>
+          <p className="text-sm text-muted-foreground mt-1">Stake locked · {stake} USDm</p>
           <p className="text-xs text-muted-foreground mt-1 font-mono">
             {mins}:{secs}
           </p>

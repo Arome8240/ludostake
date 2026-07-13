@@ -93,7 +93,7 @@ function HistoryCard({ entry }: { entry: GameHistoryEntry }) {
             <p className={`text-sm font-bold ${isWin ? 'text-gold' : 'text-loss'}`}>
               {isWin ? `+${reward.toFixed(2)}` : `-${parseFloat(entry.stakeAmount).toFixed(2)}`}
             </p>
-            <p className="text-[10px] text-muted-foreground">cUSD</p>
+            <p className="text-[10px] text-muted-foreground">USDm</p>
           </>
         ) : (
           <span className="text-[11px] text-muted-foreground/50 italic">No stake</span>

@@ -10,7 +10,7 @@ import { stakeBreakdown } from '@/lib/contract';
 
 interface StakeModalProps {
   open: boolean;
-  stakeAmount: string; // human-readable cUSD e.g. "1.00"
+  stakeAmount: string; // human-readable USDm e.g. "1.00"
   onClose: () => void;
   onSuccess: (gameId: `0x${string}`) => void;
 }
@@ -42,7 +42,7 @@ function stepStatus(current: StakingStatus, stepKey: 'approve' | 'stake'): Step[
 
 function Steps({ status }: { status: StakingStatus }) {
   const steps: { key: 'approve' | 'stake'; label: string }[] = [
-    { key: 'approve', label: 'Approve cUSD' },
+    { key: 'approve', label: 'Approve USDm' },
     { key: 'stake', label: 'Lock stake' },
   ];
 
@@ -236,7 +236,7 @@ export function StakeModal({ open, stakeAmount, onClose, onSuccess }: StakeModal
                       <p className="text-lg font-bold text-foreground">Stake locked!</p>
                       <p className="text-sm text-muted-foreground mt-1">
                         Win to earn{' '}
-                        <span className="text-gold font-semibold">{netRewardFormatted} cUSD</span>
+                        <span className="text-gold font-semibold">{netRewardFormatted} USDm</span>
                       </p>
                     </div>
                     {displayHash && <TxLink hash={displayHash} />}
@@ -278,7 +278,7 @@ export function StakeModal({ open, stakeAmount, onClose, onSuccess }: StakeModal
                     <Steps status={status} />
                     <p className="text-xs text-muted-foreground text-center">
                       {status === 'approving' || status === 'approval-pending'
-                        ? 'Approving cUSD spend in your wallet…'
+                        ? 'Approving USDm spend in your wallet…'
                         : 'Locking your stake on Celo…'}
                     </p>
                     {displayHash && <TxLink hash={displayHash} />}
@@ -299,19 +299,19 @@ export function StakeModal({ open, stakeAmount, onClose, onSuccess }: StakeModal
                     <div className="rounded-2xl bg-surface-raised border border-surface-border overflow-hidden">
                       <div className="flex justify-between px-4 py-3 border-b border-surface-border">
                         <span className="text-sm text-muted-foreground">Your stake</span>
-                        <span className="text-sm font-medium">{breakdown.stake} cUSD</span>
+                        <span className="text-sm font-medium">{breakdown.stake} USDm</span>
                       </div>
                       <div className="flex justify-between px-4 py-3 border-b border-surface-border">
                         <span className="text-sm text-muted-foreground">Prize pool</span>
-                        <span className="text-sm font-medium">{breakdown.pot} cUSD</span>
+                        <span className="text-sm font-medium">{breakdown.pot} USDm</span>
                       </div>
                       <div className="flex justify-between px-4 py-3 border-b border-surface-border">
                         <span className="text-sm text-muted-foreground">Protocol fee (8%)</span>
-                        <span className="text-sm text-muted-foreground">−{breakdown.fee} cUSD</span>
+                        <span className="text-sm text-muted-foreground">−{breakdown.fee} USDm</span>
                       </div>
                       <div className="flex justify-between px-4 py-3 bg-gold/5">
                         <span className="text-sm font-semibold">You'll earn if you win</span>
-                        <span className="text-sm font-bold text-gold">{breakdown.reward} cUSD</span>
+                        <span className="text-sm font-bold text-gold">{breakdown.reward} USDm</span>
                       </div>
                     </div>
 
@@ -327,7 +327,7 @@ export function StakeModal({ open, stakeAmount, onClose, onSuccess }: StakeModal
                       onClick={handleConfirm}
                       className="w-full py-4 rounded-xl bg-primary text-white font-bold text-base active:scale-95 transition-transform tap-target"
                     >
-                      Approve &amp; Stake {breakdown.stake} cUSD
+                      Approve &amp; Stake {breakdown.stake} USDm
                     </button>
 
                     <p className="text-xs text-center text-muted-foreground">

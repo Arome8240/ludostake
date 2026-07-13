@@ -57,7 +57,7 @@ export function useStaking() {
   const [state, setState] = useState<StakingState>(INITIAL_STATE);
 
   const contractAddress = chainId ? LUDO_STAKES_ADDRESS[chainId] : undefined;
-  const cUSDAddress = chainId ? CUSD_ADDRESS[chainId] : undefined;
+  const usdmAddress = chainId ? USDM_ADDRESS[chainId] : undefined;
 
   // ── wagmi write hooks ────────────────────────────────────────────────────────
 
@@ -79,8 +79,8 @@ export function useStaking() {
   // ── Allowance read ────────────────────────────────────────────────────────────
 
   const { refetch: refetchAllowance } = useReadContract({
-    address: cUSDAddress,
-    abi: CUSD_ABI,
+    address: usdmAddress,
+    abi: USDM_ABI,
     functionName: 'allowance',
     args: address && contractAddress ? [address, contractAddress] : undefined,
     query: { enabled: false }, // manual trigger only
@@ -90,7 +90,7 @@ export function useStaking() {
 
   const createGame = useCallback(
     async (cusdAmount: string) => {
-      if (!address || !contractAddress || !cUSDAddress) {
+      if (!address || !contractAddress || !usdmAddress) {
         setState((s) => ({ ...s, status: 'error', error: 'Wallet not connected' }));
         return;
       }
@@ -118,8 +118,8 @@ export function useStaking() {
           setState((s) => ({ ...s, status: 'approving' }));
 
           const approveTxHash = await approveWrite({
-            address: cUSDAddress,
-            abi: CUSD_ABI,
+            address: usdmAddress,
+            abi: USDM_ABI,
             functionName: 'approve',
             args: [contractAddress, stakeAmountWei],
           });
@@ -149,14 +149,14 @@ export function useStaking() {
         setState((s) => ({ ...s, status: 'error', error: message }));
       }
     },
-    [address, contractAddress, cUSDAddress, approveWrite, gameWrite, refetchAllowance]
+    [address, contractAddress, usdmAddress, approveWrite, gameWrite, refetchAllowance]
   );
 
   // ── joinGame ──────────────────────────────────────────────────────────────────
 
   const joinGame = useCallback(
     async (gameId: `0x${string}`, cusdAmount: string) => {
-      if (!address || !contractAddress || !cUSDAddress) {
+      if (!address || !contractAddress || !usdmAddress) {
         setState((s) => ({ ...s, status: 'error', error: 'Wallet not connected' }));
         return;
       }
@@ -180,8 +180,8 @@ export function useStaking() {
         if (currentAllowance < stakeAmountWei) {
           setState((s) => ({ ...s, status: 'approving' }));
           const approveTxHash = await approveWrite({
-            address: cUSDAddress,
-            abi: CUSD_ABI,
+            address: usdmAddress,
+            abi: USDM_ABI,
             functionName: 'approve',
             args: [contractAddress, stakeAmountWei],
           });
@@ -206,7 +206,7 @@ export function useStaking() {
         setState((s) => ({ ...s, status: 'error', error: message }));
       }
     },
-    [address, contractAddress, cUSDAddress, approveWrite, gameWrite, refetchAllowance]
+    [address, contractAddress, usdmAddress, approveWrite, gameWrite, refetchAllowance]
   );
 
   // ── cancelGame ────────────────────────────────────────────────────────────────

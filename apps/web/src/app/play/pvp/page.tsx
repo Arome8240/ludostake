@@ -44,7 +44,7 @@ export default function PvpPlayPage() {
           >
             <h2 className="text-xl font-bold tracking-tight">Connect to play vs Players</h2>
             <p className="text-sm text-muted-foreground max-w-[260px]">
-              You need a wallet to stake cUSD and join a live match.
+              You need a wallet to stake USDm and join a live match.
             </p>
           </motion.div>
           <motion.div
@@ -110,19 +110,19 @@ export default function PvpPlayPage() {
         <div className="rounded-2xl bg-surface-raised border border-surface-border overflow-hidden">
           <div className="flex justify-between px-4 py-3 border-b border-surface-border">
             <span className="text-sm text-muted-foreground">Your stake</span>
-            <span className="text-sm font-medium">{breakdown.stake} cUSD</span>
+            <span className="text-sm font-medium">{breakdown.stake} USDm</span>
           </div>
           <div className="flex justify-between px-4 py-3 border-b border-surface-border">
             <span className="text-sm text-muted-foreground">Prize pool</span>
-            <span className="text-sm font-medium">{breakdown.pot} cUSD</span>
+            <span className="text-sm font-medium">{breakdown.pot} USDm</span>
           </div>
           <div className="flex justify-between px-4 py-3 border-b border-surface-border">
             <span className="text-sm text-muted-foreground">Protocol fee (8%)</span>
-            <span className="text-sm text-muted-foreground">−{breakdown.fee} cUSD</span>
+            <span className="text-sm text-muted-foreground">−{breakdown.fee} USDm</span>
           </div>
           <div className="flex justify-between px-4 py-3 bg-gold/5">
             <span className="text-sm font-semibold">Win and earn</span>
-            <span className="text-sm font-bold text-gold">{breakdown.reward} cUSD</span>
+            <span className="text-sm font-bold text-gold">{breakdown.reward} USDm</span>
           </div>
         </div>
 
@@ -143,7 +143,7 @@ export default function PvpPlayPage() {
           onClick={() => setShowModal(true)}
           className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-gold text-gold-foreground font-bold text-base active:scale-95 transition-transform"
         >
-          Find Match — {selectedStake} cUSD
+          Find Match — {selectedStake} USDm
           <ChevronRight className="w-4 h-4" />
         </motion.button>
       </div>
