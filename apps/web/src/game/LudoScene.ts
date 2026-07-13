@@ -617,11 +617,15 @@ export class LudoScene extends Phaser.Scene {
     g.fillStyle(0x3b82f6, 0.85);
     g.fillTriangle(ox, oy + cs, ox + cs, oy + cs, mx, my);
 
-    // Safe square markers (green circle)
-    g.fillStyle(0x16a34a, 0.6);
+    // Safe square markers — starting squares use their home color; mid-path stars stay green
+    const startingByIdx = new Map<number, PlayerColor>(
+      (Object.entries(TRACK_ENTRY) as [PlayerColor, number][]).map(([color, idx]) => [idx, color])
+    );
     for (const idx of SAFE_SQUARES) {
       const [sr, sc] = OUTER_PATH[idx];
       const [sx, sy] = cellCenter(sr, sc);
+      const nativeColor = startingByIdx.get(idx);
+      g.fillStyle(nativeColor ? COLOR_HEX[nativeColor] : 0x16a34a, 0.8);
       g.fillCircle(sx, sy, 4);
     }
 
