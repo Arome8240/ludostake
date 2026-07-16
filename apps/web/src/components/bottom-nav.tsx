@@ -17,7 +17,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] sm:max-w-none z-50 glass border-t border-surface-border"
+      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] z-50 glass border-t border-surface-border sm:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex h-nav-height">

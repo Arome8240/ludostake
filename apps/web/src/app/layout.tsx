@@ -5,6 +5,7 @@ import './globals.css';
 import { WalletProvider } from '@/components/wallet-provider';
 import { WalletGuard } from '@/components/wallet-guard';
 import { BottomNav } from '@/components/bottom-nav';
+import { SideNav } from '@/components/side-nav';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -41,24 +42,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <WalletProvider>
           <WalletGuard>
             {/*
-             * AppShell: full-height container that accounts for iOS safe areas.
-             * Mobile/MiniPay: capped at 390px, centered, safe-area insets.
-             * Desktop (sm+): full-width, no max-width constraint.
+             * AppShell: flex-col on mobile, flex-row on desktop.
+             * Mobile/MiniPay: capped at 390px, bottom nav, safe-area insets.
+             * Desktop (sm+): full-width, sidebar nav, content area scrolls.
              */}
             <div
               id="app-shell"
               className="
-                relative flex flex-col
+                flex flex-col sm:flex-row
                 min-h-dvh
                 w-full max-w-[390px] sm:max-w-none mx-auto
                 bg-surface text-foreground
-                pt-safe-top pb-[calc(4rem+env(safe-area-inset-bottom))]
-                pl-safe-left pr-safe-right
-                overflow-x-hidden
+                overflow-x-hidden sm:overflow-x-visible
               "
             >
-              <main className="flex-1 flex flex-col">{children}</main>
-              <BottomNav />
+              <SideNav />
+              <div
+                className="
+                  flex-1 flex flex-col
+                  pt-safe-top pb-[calc(4rem+env(safe-area-inset-bottom))] sm:pb-0
+                  pl-safe-left pr-safe-right
+                  sm:h-dvh sm:overflow-y-auto
+                  overflow-x-hidden
+                "
+              >
+                <main className="flex-1 flex flex-col">{children}</main>
+                <BottomNav />
+              </div>
             </div>
           </WalletGuard>
         </WalletProvider>
