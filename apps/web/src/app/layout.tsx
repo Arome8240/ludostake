@@ -40,25 +40,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.variable} font-sans antialiased`}>
         <WalletProvider>
           <WalletGuard>
-            {/*
-             * AppShell: full-height container that accounts for iOS safe areas.
-             * pt-safe-top ensures content clears the status bar notch.
-             * pb-nav-height leaves room for the bottom navigation bar.
-             */}
-            <div
-              id="app-shell"
-              className="
-                relative flex flex-col
-                min-h-dvh
-                w-full max-w-[390px] mx-auto
-                bg-surface text-foreground
-                pt-safe-top pb-[calc(4rem+env(safe-area-inset-bottom))]
-                pl-safe-left pr-safe-right
-                overflow-x-hidden
-              "
-            >
-              <main className="flex-1 flex flex-col">{children}</main>
-              <BottomNav />
+            {/* Desktop backdrop — invisible on mobile (just a block div) */}
+            <div className="min-h-dvh sm:bg-[#030303] sm:flex sm:justify-center">
+              {/*
+               * AppShell: full-height container that accounts for iOS safe areas.
+               * On mobile/MiniPay: full-width, safe-area insets, exactly as before.
+               * On desktop: centered 390px phone column with subtle side borders.
+               */}
+              <div
+                id="app-shell"
+                className="
+                  relative flex flex-col
+                  min-h-dvh
+                  w-full max-w-[390px] mx-auto
+                  bg-surface text-foreground
+                  pt-safe-top pb-[calc(4rem+env(safe-area-inset-bottom))]
+                  pl-safe-left pr-safe-right
+                  overflow-x-hidden
+                  sm:border-x sm:border-white/[0.07]
+                  sm:shadow-[0_0_80px_rgba(0,0,0,0.7)]
+                "
+              >
+                <main className="flex-1 flex flex-col">{children}</main>
+                <BottomNav />
+              </div>
             </div>
           </WalletGuard>
         </WalletProvider>
